@@ -2,16 +2,20 @@ import datetime
 
 class Event(object):
 
-    def __init__(self, start, freq):
+    def __init__(self, name, start, freq):
         """
         Construct a Event info with the given month, day, and year
         time of day, and frequency of the event
         """
+        self.start = start
         self.month = start.month
         self.day = start.day
         self.year = start.year
         self.time = start.hour,start.minute
+        self.hour = start.hour
+        self.minute = start.minute
         self.freq = freq
+        self.name = name
 
     def genSeq(self):
         """
@@ -30,7 +34,6 @@ class Event(object):
         """
         NthDay = self.genSeq()
         daysList = []
-        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         start = datetime.datetime(self.year,self.month,self.day)
         for x in range(len(NthDay)):
             nth = datetime.timedelta(days=NthDay[x])
@@ -48,6 +51,19 @@ class Event(object):
         for x in range(len(daysList)):
             daysList[x] = days[daysList[x]]
         return daysList
+    
+    def yearRoutine(self):
+        """
+        Generates a list of the days, dates, and times that the event will
+        happen.
+        """
+        NthDay = self.genSeq()
+        daysList = self.dayListStr()
+        start = datetime.datetime(self.year,self.month,self.day)
+        for x in range(len(daysList)):
+            nth = datetime.timedelta(days=NthDay[x])
+            newDate = start + nth
+            print("I will", self.name, "on", daysList[x], datetime.datetime(newDate.year,newDate.month,newDate.day), "at", self.hour, ":", self.minute)
 
             
 
