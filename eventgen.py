@@ -2,12 +2,13 @@ import datetime
 
 class EventGen(object):
 
-    def __init__(self, name, start, freq):
+    def __init__(self, name, start, end, freq):
         """
         Construct a Event info with the given month, day, and year
         time of day, and frequency of the event
         """
         self.start = start
+        self.end = end
         self.month = start.month
         self.day = start.day
         self.year = start.year
@@ -22,7 +23,9 @@ class EventGen(object):
         Generates a list of the nth day that the event will happen
         depending on its inputed frequency
         """
-        NthDays = list(range(0,366,self.freq))
+        totalDaysTD = self.end - self.start
+        totalDaysINT = int(totalDaysTD/datetime.timedelta(days=1))
+        NthDays = list(range(0,totalDaysINT+1,self.freq))
         return NthDays
 
     def dayListNums(self):
