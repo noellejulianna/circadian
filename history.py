@@ -1,29 +1,6 @@
 import datetime
 import eventgen
 import schedule
-
-class History(object):
-    
-    def __init__(self, name, start, end, freq):
-        self.start = start
-        self.end = end
-        self.month = start.month
-        self.day = start.day
-        self.year = start.year
-        self.time = datetime.time(start.hour,start.minute)
-        self.hour = start.hour
-        self.minute = start.minute
-        self.freq = freq
-        self.name = name
-        self.egInfo = eventgen.EventGen(name,start,end,freq)
-        self.sInfo = schedule.Schedule(name,start,end,freq)
-
-    def __repr__(self):
-        """
-        Display a date in a nice format
-        """
-        s = "{:02}/{:02}/{:04}".format(self.month, self.day, self.year)
-        return s
     
     def findCyclePoint(self):
         """
@@ -80,3 +57,7 @@ class History(object):
 #design schedule for start date to any end date
 #schedule should be able to list multiple events 
 #store as event objects and sort them
+
+#Statistics I want to keep
+    
+    

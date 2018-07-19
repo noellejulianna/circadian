@@ -1,10 +1,12 @@
 import datetime
 import eventgen
+import pickle
+from operator import itemgetter
 
 class Schedule(object):
     
     def __init__(self, event, start=None, end=None):
-        if start == None:
+        if start == None: #should be start
             self.start = event.start
         else:
             self.start = start
@@ -16,6 +18,7 @@ class Schedule(object):
         self.day = start.day
         self.year = start.year
         self.egInfo = [event]
+        self.schedList = []
 
     def createSchedule(self):
         """
@@ -35,8 +38,87 @@ class Schedule(object):
                 if fullDate > self.end:
                     break
                 else:
-                    events += [x.name,fullDate]
-        events.sort()
+                    events += [[x.name,fullDate]]
+        eventsFinal = sorted(events, key=itemgetter(1))
+        for b in eventsFinal:
+            self.schedList.append('To {} on day {} on the date {} at {}.\r\n'.format(b[0],days[b[1].weekday()],b[1].date(),b[1].time()))
+    
+    def saveSchedule(self):
+        """
+        Pickles the schedule.
+        """
         with open("schedule.txt", "w+") as f:
-            for b in events:
-                f.write('To {} on day {} on the date {} at {}.\r\n'.format(b.name,days[b.weekday()],b.date(),b.time()))
+            pickle.dump(self.schedList, f)
+
+    def loadSchedule(self):
+        """
+        Loads the schedule to the app.
+        """
+        self.schedList = pickle.load("schedule.txt")
+
+    def addEvent(self, newEvent):
+        """
+        Adds a new event object to the schedule.
+        """
+        self.egInfo.append(newEvent)
+        self.createSchedule()
+
+    def editEvent(self, event):
+        """
+        Edits information in an event.
+        """
+    
+    def findCyclePoint(self):
+        """
+        Returns the most recent instantiation of an event.
+        """
+        nthNow = datetime.datetime.now() - self.start
+        for x in self.egInfo:
+            for r in range(len(x.genSeq())):
+                cyclePoint = x.genSeq()[r]
+                if nthNow < datetime.timedelta(days=self.freq):
+                    return 0
+                elif nthNow < datetime.timedelta(days=cyclePoint):
+                    return r-1
+
+    def eventStreak(self):
+        """
+        Keeps track of the streak for an event.
+        """
+    
+    def eventTimeAvg(self, time):
+        """
+        Keeps track of the average lateness/earliness that
+        the user engages in the event, based on user input.
+        """
+
+    # def checkUndoneEvent(self):
+    #     """
+    #     Checks whether there are any events from the last check till now
+    #     that have not been fulfilled
+    #     """
+    #     f = open("history.txt")
+    #     eventLines = f.read()
+    #     f.close()
+    #     LoE = eventLines.split('\n')
+    #     for x in range(len(LoE)):
+
+    # def markEventDone(self):
+    #     """
+    #     Marks an event done for a certain date and time
+    #     """
+    #     done = input("")
+
+    # def resetSchedule(self):
+    #     """
+    #     Resets the schedule to have the start date be the next day
+    #     (Used for when a cycle is broken)
+    #     """
+
+#design schedule for start date to any end date
+#schedule should be able to list multiple events 
+#store as event objects and sort them
+
+#Statistics I want to keep
+    
+    
