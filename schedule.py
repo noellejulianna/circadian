@@ -6,18 +6,26 @@ from operator import itemgetter
 class Schedule(object):
     
     def __init__(self, event, start=None, end=None):
-        if start == None: #should be start
-            self.start = event.start
+        if start == None:
+            start = event[0].start
+            for x in event[1:]:
+                if x.start < start:
+                    start = x.start
+            self.start = start
         else:
             self.start = start
         if end == None:
-            self.end = event.end
+            end = event[0].end
+            for x in event[1:]:
+                if x.end > end:
+                    end = x.end
+            self.end = end
         else:
             self.end = end
         self.month = start.month
         self.day = start.day
         self.year = start.year
-        self.egInfo = [event]
+        self.egInfo = event
         self.schedList = []
 
     def createSchedule(self):
@@ -25,36 +33,50 @@ class Schedule(object):
         Writes a schedule for a given event into a text file
         called schedule.txt
         """
-        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        #days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         events = []
         for x in self.egInfo:
             if x.start > self.end:
                 continue
             NthDays = x.genSeq()
             for i in NthDays:
+                print(events)
                 nth = datetime.timedelta(days=i)
                 newDate = x.start + nth
                 fullDate = datetime.datetime(newDate.year,newDate.month,newDate.day,x.hour,x.minute)
                 if fullDate > self.end:
-                    break
+                    continue
+                elif fullDate < self.start:
+                    continue
                 else:
                     events += [[x.name,fullDate]]
         eventsFinal = sorted(events, key=itemgetter(1))
         for b in eventsFinal:
-            self.schedList.append('To {} on day {} on the date {} at {}.\r\n'.format(b[0],days[b[1].weekday()],b[1].date(),b[1].time()))
+            self.schedList.append([b[0],b[1]])
+            #self.schedList.append('To {} on day {} on the date {} at {}.\r\n'.format(b[0],days[b[1].weekday()],b[1].date(),b[1].time()))
+        return self.schedList
     
+    def getWeek(self):
+        """
+        Loads a list of events for the current day to the next week
+        """
+        self.start = datetime.datetime.today()
+        self.end = self.start + datetime.timedelta(days=7)
+        self.createSchedule()
+        return self.schedList
+
     def saveSchedule(self):
         """
         Pickles the schedule.
         """
-        with open("schedule.txt", "w+") as f:
+        with open("schedule.txt", "wb") as f:
             pickle.dump(self.schedList, f)
 
     def loadSchedule(self):
         """
         Loads the schedule to the app.
         """
-        self.schedList = pickle.load("schedule.txt")
+        self.schedList = pickle.load("schedule.txt", "rb")
 
     def addEvent(self, newEvent):
         """
