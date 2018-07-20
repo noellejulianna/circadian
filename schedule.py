@@ -40,7 +40,6 @@ class Schedule(object):
                 continue
             NthDays = x.genSeq()
             for i in NthDays:
-                print(events)
                 nth = datetime.timedelta(days=i)
                 newDate = x.start + nth
                 fullDate = datetime.datetime(newDate.year,newDate.month,newDate.day,x.hour,x.minute)
@@ -60,7 +59,8 @@ class Schedule(object):
         """
         Loads a list of events for the current day to the next week
         """
-        self.start = datetime.datetime.today()
+        today = datetime.datetime.today()
+        self.start = datetime.datetime(today.year,today.month,today.day)
         self.end = self.start + datetime.timedelta(days=7)
         self.createSchedule()
         return self.schedList
