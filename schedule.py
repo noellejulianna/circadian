@@ -48,7 +48,7 @@ class Schedule(object):
                 elif fullDate < self.start:
                     continue
                 else:
-                    events += [[x.name,fullDate]]
+                    events += [[x,fullDate]]
         eventsFinal = sorted(events, key=itemgetter(1))
         for b in eventsFinal:
             self.schedList.append([b[0],b[1]])
