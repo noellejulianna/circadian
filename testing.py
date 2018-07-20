@@ -20,7 +20,10 @@ coconutoilend = datetime.datetime(2019,6,19,12,30)
 coconutoil = eventgen.EventGen('coconut oil',coconutoilstart,coconutoilend,7)
 
 sched = schedule.Schedule([coconutoil,workout,shampoo])
-sched.egInfo.append(kombucha)
+sched.addEvent(kombucha)
 sched.getWeek()
 
 sched.saveSchedule()
+
+cyclesNow = sched.findCyclePoint()
+print(cyclesNow)
