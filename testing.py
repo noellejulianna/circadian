@@ -1,7 +1,6 @@
 import eventgen
 import schedule
 import datetime
-import history
 import pickle
 
 workoutstart = datetime.datetime(2018,7,1,17,30)
@@ -16,18 +15,7 @@ coconutoilstart = datetime.datetime(2018,6,19,12,30)
 coconutoilend = datetime.datetime(2019,6,19,12,30)
 coconutoil = eventgen.EventGen('coconut oil',coconutoilstart,coconutoilend,7)
 
-schedulestart = datetime.datetime(2018,8,1)
-scheduleend = datetime.datetime(2018,8,31)
-sched = schedule.Schedule(workout,schedulestart,scheduleend)
-sched.egInfo.append(shampoo)
-sched.egInfo.append(coconutoil)
+sched = schedule.Schedule([coconutoil,workout,shampoo])
+sched.getWeek()
 
-with open('fuile.txt', 'w+') as f:
-    p = pickle.dumps(sched)
-    f.write(p)
-
-    pickle.dump(sched, f)
-
-s = pickle.load()
-
-s.createSchedule()
+sched.saveSchedule()
