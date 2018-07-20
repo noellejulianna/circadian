@@ -83,25 +83,34 @@ class Schedule(object):
         Adds a new event object to the schedule.
         """
         self.egInfo.append(newEvent)
-        self.createSchedule()
 
     def editEvent(self, event):
         """
         Edits information in an event.
         """
-    
+        
     def findCyclePoint(self):
         """
         Returns the most recent instantiation of an event.
         """
-        nthNow = datetime.datetime.now() - self.start
-        for x in self.egInfo:
-            for r in range(len(x.genSeq())):
-                cyclePoint = x.genSeq()[r]
-                if nthNow < datetime.timedelta(days=self.freq):
-                    return 0
-                elif nthNow < datetime.timedelta(days=cyclePoint):
-                    return r-1
+        eventPoints = []
+        for anEvent in self.egInfo:
+            cycleNow = 0
+            nthNow = datetime.datetime.now() - anEvent.start
+            for anOccurence in range(len(anEvent.genSeq())):
+                cyclePoint = anEvent.genSeq()[anOccurence]
+                lastPoint = anEvent.genSeq()[anOccurence-1]
+                if nthNow < datetime.timedelta(days=anEvent.freq):
+                    cycleNow = 0
+                    break
+                elif nthNow == datetime.timedelta(days=cyclePoint):
+                    cycleNow = anOccurence
+                    break
+                elif datetime.timedelta(days=lastPoint) < nthNow < datetime.timedelta(days=cyclePoint):
+                    cycleNow = anOccurence-1
+                    break
+            eventPoints.append([anEvent.name,cycleNow])
+        return eventPoints
 
     def eventStreak(self):
         """
