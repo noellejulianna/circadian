@@ -1,19 +1,31 @@
 import datetime
 import eventgen
+import schedule
 import pickle
 from operator import itemgetter
 
-class Main(object):
-    
-    def __init__(self):
-        try:
-            self.schedule = pickle.load("schedule.txt")
-        except:
-            self.schedule = self.makeSchedule()
+open python
+get pickle file
+model schedule
+generate a list of events from model
+call a function to display the week of those events
 
-    def makeSchedule(self):
-        eventName = input("What good habit would you like to start? ")
-        eventStart
-        eventEnd
-        eventFreq
-        
+def loadSchedule(self):
+    """
+    Loads the schedule to the app.
+    """
+    try:
+        sched = pickle.load("schedule.txt")
+        return sched
+    except:
+        return 0
+
+def main():
+    sched = loadSchedule()
+    if loadSchedule == 0:
+        pass
+    
+write pygame program that creates objects
+then picles them
+
+write program that reads pickle file and uses that to display the balls
