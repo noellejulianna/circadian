@@ -18,6 +18,7 @@ class EventGen(object):
         self.freq = freq
         self.name = name
         self.streak = 0
+        self.startDiffs = []
         self.avgStartDiff = 0
 
     def genSeq(self):
