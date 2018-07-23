@@ -76,19 +76,19 @@ class Schedule(object):
         self.createSchedule()
         return self.schedList
 
-    def checkStreaks(self):
-        """
-        Maintains the streak count for every event and updates the last check 
-        """
-        if 
-        uncheckedEvents = self.getTimeFrame(self.lastCheck,datetime.datetime.today())
-        for x in uncheckedEvents:
-            check = input("Did you " + x[0].name + " at " + datetime.time(x[1].hour,x[1].minute) + " on " + x[1].weekday() + "? ")
-            if check == "Yes":
-                x.streak += 1
-            elif check == "No":
-                x.streak = 0
-        self.lastCheck = datetime.datetime.today()
+    # def checkStreaks(self):
+    #     """
+    #     Maintains the streak count for every event and updates the last check 
+    #     """
+    #     if 
+    #     uncheckedEvents = self.getTimeFrame(self.lastCheck,datetime.datetime.today())
+    #     for x in uncheckedEvents:
+    #         check = input("Did you " + x[0].name + " at " + datetime.time(x[1].hour,x[1].minute) + " on " + x[1].weekday() + "? ")
+    #         if check == "Yes":
+    #             x.streak += 1
+    #         elif check == "No":
+    #             x.streak = 0
+    #     self.lastCheck = datetime.datetime.today()
 
     def saveSchedule(self):
         """
