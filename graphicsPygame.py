@@ -3,30 +3,38 @@ import pickle
 import datetime
 import pygame
 import random
+from schedule import Schedule
 pygame.init()
 pygame.font.init()
 
-week = pickle.load(open("circadianInfo.txt","rb"))['SchedList']
+unpickled = pickle.load(open("circadianInfo.txt","rb"))
+week = unpickled['SchedList']
+lastCheck = unpickled['LastCheck']
 
 # Global constants
 # Screen dimensions
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 800
+background_color = (241,228,179)
 listScreen = [SCREEN_WIDTH, SCREEN_HEIGHT]
 
 # display screen
 window = pygame.display.set_mode(listScreen)
+window.fill(background_color)
 
 # position
 pos = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
 
 # Colors
 BLACK = (0, 0, 0)
+WHEEL = (21,149,159)
 WHITE = (255, 255, 255)
 GREEN = (0, 100, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (200,100,0) 
+LINE = (19,48,70)
+CORAL = (236,151,112)
  
 # class event
 # done
@@ -40,9 +48,9 @@ class Week(object):
         self.loa = []
         self.events = LoE
         self.position = pos
-        self.color = BLUE
+        self.color = WHEEL
         self.radius = 300
-        self.inncolor = GREEN
+        self.inncolor = CORAL
         self.innRadius = (self.radius//3)*2
         self.tdplusfour = (pos[0], pos[1] + self.radius)
         self.tdplusfive = (pos[0] + self.radius*math.sin(math.radians(51.4+180)), pos[1] - self.radius*math.cos(math.radians(51.4+180)))
@@ -58,6 +66,7 @@ class Week(object):
         self.eventRing = (self.radius+self.innRadius)//2
         self.eventRadius = 5
         self.active = []
+        self.sched = Schedule([x[0] for x in week])
     
     def Color(self):
         """Assigns and keeps track of unique color per event"""
@@ -100,35 +109,35 @@ class Week(object):
     def draw(self):
         """Draws the days and events of this week"""
         pygame.draw.circle(window, self.color, self.position, self.radius)
-        pygame.draw.line(window, WHITE, self.position, self.tdplusfour)
-        pygame.draw.line(window, WHITE, self.position, self.tdplusfive)
-        pygame.draw.line(window, WHITE, self.position, self.tdplussix)
-        pygame.draw.line(window, WHITE, self.position, self.td)
-        pygame.draw.line(window, WHITE, self.position, self.tdplusone)
-        pygame.draw.line(window, WHITE, self.position, self.tdplustwo)        
-        pygame.draw.line(window, WHITE, self.position, self.tdplusthree)
+        pygame.draw.line(window, LINE, self.position, self.tdplusfour)
+        pygame.draw.line(window, LINE, self.position, self.tdplusfive)
+        pygame.draw.line(window, LINE, self.position, self.tdplussix)
+        pygame.draw.line(window, LINE, self.position, self.td)
+        pygame.draw.line(window, LINE, self.position, self.tdplusone)
+        pygame.draw.line(window, LINE, self.position, self.tdplustwo)        
+        pygame.draw.line(window, LINE, self.position, self.tdplusthree)
         pygame.draw.circle(window, self.inncolor, self.position, self.innRadius)
         
         for i in range(len(self.loa)):
             eventColor = self.loa[i][2]
             if self.loa[i] == self.active:
-                eventColor = (255, 0, 0)
+                eventColor = (199, 64, 45)
             pygame.draw.circle(window, eventColor, self.loa[i][1] , self.eventRadius)
-            name = self.font.render(self.loa[i][0].name, 0, self.loa[i][2])
+            name = self.font.render(self.loa[i][0].name, 10, self.loa[i][2])
             window.blit(name, (self.loa[i][1][0]-15, self.loa[i][1][1]+10))
 
         if len(self.active) != 0:
-            centerTitle = self.bigFont.render(self.active[0].name, 0, BLUE)
+            centerTitle = self.bigFont.render(self.active[0].name, 10, BLUE)
             window.blit(centerTitle, (self.position[0]-(centerTitle.get_width()//2), self.position[1]))
             duration = "start: {} end: {}".format(self.active[0].start, self.active[0].end)
             frequency = "frequency: every {} days".format(self.active[0].freq)
             streak = "streak: every {} days".format(self.active[0].streak)
             lateness =  "average lateness: {}".format(self.active[0].avgStartDiff)
                      
-            surfDuration = self.font.render(duration, 0, BLUE) 
-            surfFrequency = self.font.render(frequency, 0, BLUE) 
-            surfStreak = self.font.render(streak, 0, BLUE) 
-            surfLateness = self.font.render(lateness, 0, BLUE) 
+            surfDuration = self.font.render(duration, 10, BLUE) 
+            surfFrequency = self.font.render(frequency, 10, BLUE) 
+            surfStreak = self.font.render(streak, 10, BLUE) 
+            surfLateness = self.font.render(lateness, 10, BLUE) 
 
             window.blit(surfDuration, (self.position[0]-(surfDuration.get_width()//2), self.position[1]+30))
             window.blit(surfFrequency, (self.position[0]-(surfFrequency.get_width()//2), self.position[1]+50))
@@ -145,6 +154,45 @@ class Week(object):
             if d <= 5:
                 self.active = self.loa[i]
 
+    def getInput(self, prompt, pos):
+        promptSurface = self.font.render(prompt,100,WHITE)
+        window.blit(promptSurface, pos)
+        pygame.display.flip()
+        word=""
+        wordSurface = self.font.render(word,100,BLACK)
+        done = True
+        while done:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        done = False
+                        self.draw()
+                    else:
+                        word+=chr(event.key)
+                        wordSurface = self.font.render(word,100,BLACK)
+                        window.blit(wordSurface, (pos[0], pos[1]+30))
+                        pygame.display.flip()
+
+
+        return word
+
+    def getUncheckEvents(self):
+        unchecked = self.sched.getTimeFrame(datetime.datetime(2018,7,16), datetime.datetime.today())
+        print(unchecked)
+        for x in unchecked:
+            self.eventCheck(x[0],x[1])
+    
+    def eventCheck(self, event, dt):
+        check = self.getInput("Did you " + event.name + " at " + str(datetime.time(dt.hour,dt.minute)) + " on " + str(dt.weekday()) + "? ", self.position)
+        if check == "Yes":
+            event.streak += 1
+            return True
+        elif check == "No":
+            event.streak = 0
+            return False
+    
+
+
 #self.active[0].freq
 
 # NEXT STEP: PLOT NAME WITH CORERCSPONDING COLOR
@@ -156,7 +204,8 @@ w.Color()
 
 while True:
     w.draw()
-
+    if datetime.datetime.today() != datetime.datetime(2018,7,16):
+        w.getUncheckEvents()
     for event in pygame.event.get():
         if event.type == pygame.MOUSEMOTION:
             mousex, mousey = event.pos
