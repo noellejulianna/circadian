@@ -2,9 +2,11 @@ import math
 import pickle
 import datetime
 import pygame
+import random
 pygame.init()
+pygame.font.init()
 
-week = pickle.load(open("schedule.txt","rb"))
+week = pickle.load(open("circadianInfo.txt","rb"))['SchedList']
 
 # Global constants
 # Screen dimensions
@@ -16,7 +18,7 @@ listScreen = [SCREEN_WIDTH, SCREEN_HEIGHT]
 window = pygame.display.set_mode(listScreen)
 
 # position
-pos = (500, 400)
+pos = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
 
 # Colors
 BLACK = (0, 0, 0)
@@ -35,6 +37,7 @@ class Week(object):
     def __init__(self, LoE, pos):
         """Constructor, Pass a LoE,
         returns an object of type week"""
+        self.loa = []
         self.events = LoE
         self.position = pos
         self.color = BLUE
@@ -48,10 +51,26 @@ class Week(object):
         self.tdplusone = (pos[0] - self.radius*math.sin(math.radians(25.8+180)), pos[1] + self.radius*math.cos(math.radians(25.8+180)))
         self.tdplustwo = (pos[0] - self.radius*math.cos(math.radians(12.8+180)), pos[1] + self.radius*math.sin(math.radians(12.8+180)))
         self.tdplusthree = (pos[0] - self.radius*math.sin(math.radians(51.4+180)), pos[1] - self.radius*math.cos(math.radians(51.4+180)))
+        #self.font = pygame.font.Font("sunmed.ttf", 12)
+        self.font = pygame.font.SysFont("Times", 14)
         # constants for plotting schedule
         self.eventRing = (self.radius+self.innRadius)//2
         self.eventRadius = 5
-        
+    
+    def Color(self):
+        """Assigns and keeps track of unique color per event"""
+        lon = {}
+        for i in range(len(self.loa)):
+            if self.loa[i][0] not in lon:
+                r = random.randint(10, 25)*10
+                g = random.randint(10, 25)*10
+                b = random.randint(10, 25)*10
+                lon[self.loa[i][0]] = (r, g, b)
+                self.loa[i].append((r,g,b))
+            else:
+                self.loa[i].append(lon[self.loa[i][0]])
+                
+
     def Cartesian(self):
         # translated from time in day to x-y coordiantes
         # Given day and time, Returns Cartesian coordinates
@@ -62,18 +81,19 @@ class Week(object):
         self.eventRing = (self.radius+self.innRadius)//2
         self.today = datetime.datetime.today()
         self.start = week[0][1].weekday()
-        LoA = []
         for i in range(len(week)):
-            LoA += [[week[i][0] ,week[i][1].hour/24 + (week[i][1].weekday() - self.today.weekday())]]
+            self.loa += [[week[i][0].name ,week[i][1].hour/24 + (week[i][1].weekday() - self.today.weekday())]]
 
-        for i in range(len(LoA)):
-            LoA[i][1] = LoA[i][1]/7*(2*3.14)
+        for i in range(len(self.loa)):
+            self.loa[i][1] = self.loa[i][1]/7*(2*3.14)
         
         # translate polar to cartesian
         # x = r × cos( θ )
         # y = r × sin( θ )
-        for i in range(len(LoA)):
-            LoA[i][1] = (self.eventRing*cos(LoA[i][1]),self.eventRing*sin(LoA[i][1]))
+        for i in range(len(self.loa)):
+            self.loa[i][1] = (int(self.eventRing*math.cos(self.loa[i][1])),int(self.eventRing*math.sin(self.loa[i][1])))
+        for i in range(len(self.loa)):
+            self.loa[i][1] = ((pos[0]+self.loa[i][1][0]),(pos[1]+self.loa[i][1][1]))
 
     def draw(self):
         """Draws the days and events of this week"""
@@ -88,13 +108,19 @@ class Week(object):
         pygame.draw.circle(window, self.inncolor, self.position, self.innRadius)
         # draw events as dots
         
-        for i in range(len(LoA)):
-            pygame.draw.circle(window, PINK, LoA[i][1], self.eventRadius)
+        for i in range(len(self.loa)):
+            pygame.draw.circle(window, self.loa[i][2], self.loa[i][1] , self.eventRadius)
+            name = self.font.render(self.loa[i][0], 0, self.loa[i][2])
+            window.blit(name, (self.loa[i][1][0]-15, self.loa[i][1][1]+10))
 
+# NEXT STEP: PLOT NAME WITH CORERCSPONDING COLOR
 
 LoE = []
 w = Week(LoE, pos)
+w.Cartesian()
+w.Color()
 w.draw()
+
 
 # plot lists of lists as dots
 # assume, for now, that no two events occur at the same time
