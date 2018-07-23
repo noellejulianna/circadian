@@ -1,6 +1,7 @@
 import datetime
 import eventgen
 import pickle
+import main
 from operator import itemgetter
 
 class Schedule(object):
@@ -77,11 +78,12 @@ class Schedule(object):
 
     def checkStreaks(self):
         """
-        Checks if 
+        Maintains the streak count for every event and updates the last check 
         """
+        if 
         uncheckedEvents = self.getTimeFrame(self.lastCheck,datetime.datetime.today())
         for x in uncheckedEvents:
-            check = input("Did you " + x[0].name + " at " + datetime.time(x[1].hour,x[1].minute) + " on " + day(x[1].weekday()) + "? ")
+            check = input("Did you " + x[0].name + " at " + datetime.time(x[1].hour,x[1].minute) + " on " + x[1].weekday() + "? ")
             if check == "Yes":
                 x.streak += 1
             elif check == "No":
@@ -130,18 +132,7 @@ class Schedule(object):
                     break
             eventPoints.append([anEvent.name,cycleNow])
         return eventPoints
-
-    def eventStreak(self):
-        """
-        Keeps track of the streak for an event.
-        """
     
-    def eventTimeAvg(self, time):
-        """
-        Keeps track of the average lateness/earliness that
-        the user engages in the event, based on user input.
-        """
-
     # def checkUndoneEvent(self):
     #     """
     #     Checks whether there are any events from the last check till now
