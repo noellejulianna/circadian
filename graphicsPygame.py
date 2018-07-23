@@ -53,9 +53,11 @@ class Week(object):
         self.tdplusthree = (pos[0] - self.radius*math.sin(math.radians(51.4+180)), pos[1] - self.radius*math.cos(math.radians(51.4+180)))
         #self.font = pygame.font.Font("sunmed.ttf", 12)
         self.font = pygame.font.SysFont("Times", 14)
+        self.bigFont = pygame.font.SysFont("Times", 24)
         # constants for plotting schedule
         self.eventRing = (self.radius+self.innRadius)//2
         self.eventRadius = 5
+        self.active = []
     
     def Color(self):
         """Assigns and keeps track of unique color per event"""
@@ -82,7 +84,7 @@ class Week(object):
         self.today = datetime.datetime.today()
         self.start = week[0][1].weekday()
         for i in range(len(week)):
-            self.loa += [[week[i][0].name ,week[i][1].hour/24 + (week[i][1].weekday() - self.today.weekday())]]
+            self.loa += [[week[i][0] ,week[i][1].hour/24 + (week[i][1].weekday() - self.today.weekday())]]
 
         for i in range(len(self.loa)):
             self.loa[i][1] = self.loa[i][1]/7*(2*3.14)
@@ -106,12 +108,44 @@ class Week(object):
         pygame.draw.line(window, WHITE, self.position, self.tdplustwo)        
         pygame.draw.line(window, WHITE, self.position, self.tdplusthree)
         pygame.draw.circle(window, self.inncolor, self.position, self.innRadius)
-        # draw events as dots
         
         for i in range(len(self.loa)):
-            pygame.draw.circle(window, self.loa[i][2], self.loa[i][1] , self.eventRadius)
-            name = self.font.render(self.loa[i][0], 0, self.loa[i][2])
+            eventColor = self.loa[i][2]
+            if self.loa[i] == self.active:
+                eventColor = (255, 0, 0)
+            pygame.draw.circle(window, eventColor, self.loa[i][1] , self.eventRadius)
+            name = self.font.render(self.loa[i][0].name, 0, self.loa[i][2])
             window.blit(name, (self.loa[i][1][0]-15, self.loa[i][1][1]+10))
+
+        if len(self.active) != 0:
+            centerTitle = self.bigFont.render(self.active[0].name, 0, BLUE)
+            window.blit(centerTitle, (self.position[0]-(centerTitle.get_width()//2), self.position[1]))
+            duration = "start: {} end: {}".format(self.active[0].start, self.active[0].end)
+            frequency = "frequency: every {} days".format(self.active[0].freq)
+            streak = "streak: every {} days".format(self.active[0].streak)
+            lateness =  "average lateness: {}".format(self.active[0].avgStartDiff)
+                     
+            surfDuration = self.font.render(duration, 0, BLUE) 
+            surfFrequency = self.font.render(frequency, 0, BLUE) 
+            surfStreak = self.font.render(streak, 0, BLUE) 
+            surfLateness = self.font.render(lateness, 0, BLUE) 
+
+            window.blit(surfDuration, (self.position[0]-(surfDuration.get_width()//2), self.position[1]+30))
+            window.blit(surfFrequency, (self.position[0]-(surfFrequency.get_width()//2), self.position[1]+50))
+            window.blit(surfStreak, (self.position[0]-(surfStreak.get_width()//2), self.position[1]+70))
+            window.blit(surfLateness, (self.position[0]-(surfLateness.get_width()//2), self.position[1]+90))
+        
+    def eventInfo(self, mousex, mousey):
+        """When you click on a event (as represented by a circle)
+        the event infor is listed, which is extracted from the object"""
+        for i in range(len(self.loa)):    
+            x = self.loa[i][1][0]
+            y = self.loa[i][1][1] 
+            d = math.sqrt((x-mousex)**2 + (y-mousey)**2)
+            if d <= 5:
+                self.active = self.loa[i]
+
+#self.active[0].freq
 
 # NEXT STEP: PLOT NAME WITH CORERCSPONDING COLOR
 
@@ -119,22 +153,14 @@ LoE = []
 w = Week(LoE, pos)
 w.Cartesian()
 w.Color()
-w.draw()
 
-
-# plot lists of lists as dots
-# assume, for now, that no two events occur at the same time
-
-#  day class 
-
-# Streak, global variable
- 
-# Go ahead and update the screen with what we've drawn.
-pygame.display.flip()
- 
-    # Be IDLE friendly. If you forget this line, the program will 'hang'
-    # on exit.
 while True:
-    pass
+    w.draw()
 
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEMOTION:
+            mousex, mousey = event.pos
+            w.eventInfo(mousex, mousey)
+
+    pygame.display.flip()
 pygame.quit()
