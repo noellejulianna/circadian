@@ -27,6 +27,7 @@ class Schedule(object):
         self.year = start.year
         self.egInfo = event
         self.schedList = []
+        self.lastCheck = datetime.datetime.today()
 
     def createSchedule(self):
         """
@@ -65,29 +66,47 @@ class Schedule(object):
         self.createSchedule()
         return self.schedList
 
+    def getTimeFrame(self, start, end):
+        """
+        Loads a lit of events for a fixed timeframe
+        """
+        self.start = start
+        self.end = end
+        self.createSchedule()
+        return self.schedList
+
+    def checkStreaks(self):
+        """
+        Checks if 
+        """
+        uncheckedEvents = self.getTimeFrame(self.lastCheck,datetime.datetime.today())
+        for x in uncheckedEvents:
+            check = input("Did you " + x[0].name + " at " + datetime.time(x[1].hour,x[1].minute) + " on " + day(x[1].weekday()) + "? ")
+            if check == "Yes":
+                x.streak += 1
+            elif check == "No":
+                x.streak = 0
+        self.lastCheck = datetime.datetime.today()
+
     def saveSchedule(self):
         """
         Pickles the schedule.
         """
-        with open("schedule.txt", "wb") as f:
-            pickle.dump(self.schedList, f)
+        circadianInfo = {'SchedList': self.schedList,"LastCheck": self.lastCheck}
+        with open("circadianInfo.txt", "wb") as f:
+            pickle.dump(circadianInfo, f)
 
     def loadSchedule(self):
         """
         Loads the schedule to the app.
         """
-        self.schedList = pickle.load("schedule.txt", "rb")
+        self.schedList = pickle.load("circadianInfo.txt", "rb")
 
     def addEvent(self, newEvent):
         """
         Adds a new event object to the schedule.
         """
         self.egInfo.append(newEvent)
-
-    def editEvent(self, event):
-        """
-        Edits information in an event.
-        """
         
     def findCyclePoint(self):
         """

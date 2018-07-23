@@ -2,6 +2,7 @@ import eventgen
 import schedule
 import datetime
 import pickle
+import main
 
 workoutstart = datetime.datetime(2018,7,1,17,30)
 workoutend = datetime.datetime(2019,7,1,17,30)
@@ -27,3 +28,11 @@ sched.saveSchedule()
 
 cyclesNow = sched.findCyclePoint()
 print(cyclesNow)
+
+#Edit testing
+print([x.name for x in sched.egInfo])
+coconutoilNewStart = datetime.datetime(2018,6,21,22)
+coconutoilNewEnd = datetime.datetime(2019,6,21,22)
+coconutoil = eventgen.EventGen('coconut oil', coconutoilNewStart,coconutoilNewEnd,5)
+main.editEvent(sched.egInfo, coconutoil)
+print(coconutoil.freq,coconutoil.start,coconutoil.end)

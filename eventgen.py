@@ -17,6 +17,8 @@ class EventGen(object):
         self.minute = start.minute
         self.freq = freq
         self.name = name
+        self.streak = 0
+        self.avgStartDiff = 0
 
     def genSeq(self):
         """
@@ -54,6 +56,7 @@ class EventGen(object):
         for x in range(len(daysList)):
             daysList[x] = days[daysList[x]]
         return daysList
+
     
     
             
