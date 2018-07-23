@@ -48,16 +48,25 @@ def overallStreak(allEvents):
         allStreaks.append(x.streak)
     return min(allStreaks)
 
-def avgStartTime(event,startTime):
+def updateAvgStart(event,time):
     """
     Calculates the average lateness/earliest that an event occurs.
     """
-    startDiff = event.datetime - startTime #needs to be datetime object!
-    startDiffMins = startDiff.mins
-    avg = (eventgen.avgStartDiff + startDiff)
+    event.startDiffs.append(time)
+    event.avgStartDiffs = (sum(event.startDiffs))//len(event.startDiffs)
 
+def checkEvent(event,dt):
+    check = input("Did you " + event.name + " at " + datetime.time(dt.hour,dt.minute) + " on " + dt.weekday() + "? ")
+    if check == "Yes":
+        return True
+    elif check == "No":
+        return False
 
-def loadSchedule(self):
+def checkTime(event,dt):
+    check = input("How early(-) or late(+) did you " + event.name + "?")
+    avgStartTime(event,check)
+
+def loadSchedule():
     """
     Loads the schedule to the app.
     """
@@ -66,6 +75,27 @@ def loadSchedule(self):
         return sched
     except:
         return 0
+
+def main():
+    #load up last info
+    #open pygame with last info
+        #if no info, load empty schedule
+    #load unchecked events (getTimeFrame(lastCheck,datetime.datetime.today()))
+        #checkEvent(x[0],x[1]) for x in checkEvent
+            #if checkEvent == True:
+                #x[0].streak += 1
+                #checkTime(x[0],x[1])
+            #if checkEvent == False
+                #x[0].streak = 0
+    #sched.lastCheck = datetime.datetime.today()
+    #if input event
+        #add event
+        #update schedule
+    #if hover existing event
+        #present event information
+    #if  click existing event
+        #present event editing
+    #save all session info
 
 # def main():
 #     sched = loadSchedule()
@@ -76,8 +106,3 @@ def loadSchedule(self):
 #         open create event window
 #         copy name, streak and lateness and input new event information (start,end,freq)
 #         call editEvent([list of all events],newedited event) #will overwrite inputed changes
-    
-# write pygame program that creates objects
-# then picles them
-
-# write program that reads pickle file and uses that to display the balls
