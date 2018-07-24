@@ -12,7 +12,7 @@ unpickled = pickle.load(open("circadianInfo.txt","rb"))
 week = unpickled['SchedList']
 lastCheck = unpickled['LastCheck']
 
-# Global constants
+# Global constants 
 # Screen dimensions
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 800
@@ -195,8 +195,6 @@ class Week(object):
 
 
 #self.active[0].freq
-
-# NEXT STEP: PLOT NAME WITH CORERCSPONDING COLOR
 
 LoE = []
 w = Week(LoE, pos)
