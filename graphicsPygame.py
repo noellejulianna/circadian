@@ -3,6 +3,7 @@ import pickle
 import datetime
 import pygame
 import random
+import main
 from schedule import Schedule
 pygame.init()
 pygame.font.init()

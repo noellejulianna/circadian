@@ -23,21 +23,22 @@ def editEvent(allEvents,newEvent):
             if x.freq != newEvent.freq:
                 x.freq = newEvent.freq
 
-def day(num):
-    if num == 0:
-        return 'Monday'
-    elif num == 1:
-        return 'Tuesday'
-    elif num == 2:
-        return 'Wednesday'
-    elif num == 3:
-        return 'Thursday'
-    elif num == 4: 
-        return 'Friday'
-    elif num == 5:
-        return 'Saturday'
-    elif num == 6:
-        return 'Sunday'
+def readDate(dt):
+    if dt.weekday() == 0:
+        day = 'Monday'
+    elif dt.weekday() == 1:
+        day = 'Tuesday'
+    elif dt.weekday() == 2:
+        day = 'Wednesday'
+    elif dt.weekday() == 3:
+        day = 'Thursday'
+    elif dt.weekday() == 4: 
+        day = 'Friday'
+    elif dt.weekday() == 5:
+        day = 'Saturday'
+    elif dt.weekday() == 6:
+        day = 'Sunday'
+    return '{}{}{}'.format()
 
 def overallStreak(allEvents):
     """

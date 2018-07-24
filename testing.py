@@ -38,4 +38,5 @@ main.editEvent(sched.egInfo, coconutoil)
 print(coconutoil.freq,coconutoil.start,coconutoil.end)
 
 test = sched.getTimeFrame(datetime.datetime(2018,7,16), datetime.datetime.today())
-print(test)
+print([[x[0].name, x[1]] for x in test])
+print(len(test))
