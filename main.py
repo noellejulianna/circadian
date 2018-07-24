@@ -55,11 +55,13 @@ def updateAvgStart(event,time):
     event.startDiffs.append(time)
     event.avgStartDiffs = (sum(event.startDiffs))//len(event.startDiffs)
 
-def checkEvent(event,dt):
-    check = input("Did you " + event.name + " at " + datetime.time(dt.hour,dt.minute) + " on " + dt.weekday() + "? ")
+def checkEvent(event,dt,weekCheck):
+    check = weekCheck.get("Did you " + event.name + " at " + datetime.time(dt.hour,dt.minute) + " on " + dt.weekday() + "? ")
     if check == "Yes":
+        event.streak += 1
         return True
     elif check == "No":
+        event.streak = 0
         return False
 
 def checkTime(event,dt):
@@ -76,7 +78,7 @@ def loadSchedule():
     except:
         return 0
 
-def main():
+#def main():
     #load up last info
     #open pygame with last info
         #if no info, load empty schedule
@@ -98,11 +100,11 @@ def main():
     #save all session info
 
 # def main():
-#     sched = loadSchedule()
-#     if loadSchedule == 0:
-#         pass
-#     #edit event
-#     if doubleclick event:
-#         open create event window
-#         copy name, streak and lateness and input new event information (start,end,freq)
-#         call editEvent([list of all events],newedited event) #will overwrite inputed changes
+     #sched = loadSchedule()
+     #if loadSchedule == 0:
+         #pass
+     #edit event
+     #if doubleclick event:
+         #open create event window
+         #copy name, streak and lateness and input new event information (start,end,freq)
+         #call editEvent([list of all events],newedited event) #will overwrite inputed changes

@@ -36,3 +36,6 @@ coconutoilNewEnd = datetime.datetime(2019,6,21,22)
 coconutoil = eventgen.EventGen('coconut oil', coconutoilNewStart,coconutoilNewEnd,5)
 main.editEvent(sched.egInfo, coconutoil)
 print(coconutoil.freq,coconutoil.start,coconutoil.end)
+
+test = sched.getTimeFrame(datetime.datetime(2018,7,16), datetime.datetime.today())
+print(test)
