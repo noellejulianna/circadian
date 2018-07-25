@@ -68,7 +68,8 @@ class Week(object):
         self.eventRadius = 5
         self.active = []
         self.sched = Schedule([x[0] for x in week])
-    
+        self.sched.getWeek()
+
     def Color(self):
         """Assigns and keeps track of unique color per event"""
         lon = {}
@@ -82,7 +83,6 @@ class Week(object):
             else:
                 self.loa[i].append(lon[self.loa[i][0]])
                 
-
     def Cartesian(self):
         # translated from time in day to x-y coordiantes
         # Given day and time, Returns Cartesian coordinates
@@ -92,20 +92,24 @@ class Week(object):
         # step 1: get polar
         self.eventRing = (self.radius+self.innRadius)//2
         self.today = datetime.datetime.today()
-        self.start = week[0][1].weekday()
-        for i in range(len(week)):
-            self.loa += [[week[i][0] ,week[i][1].hour/24 + (week[i][1].weekday() - self.today.weekday())]]
+        self.start = self.sched.schedList[0][1].weekday()
+        for i in range(len(self.sched.schedList)):
+            self.loa += [[self.sched.schedList[i][0],self.sched.schedList[i][1].hour/24 + (self.sched.schedList[i][1].weekday() - self.today.weekday()), self.sched.schedList[i][1]]]
 
         for i in range(len(self.loa)):
-            self.loa[i][1] = self.loa[i][1]/7*(2*3.14)
+            try:
+                self.loa[i][1] = self.loa[i][1]/7*(2*3.14)
+            except:
+                pass
         
         # translate polar to cartesian
         # x = r × cos( θ )
         # y = r × sin( θ )
         for i in range(len(self.loa)):
-            self.loa[i][1] = (int(self.eventRing*math.cos(self.loa[i][1])),int(self.eventRing*math.sin(self.loa[i][1])))
-        for i in range(len(self.loa)):
-            self.loa[i][1] = ((pos[0]+self.loa[i][1][0]),(pos[1]+self.loa[i][1][1]))
+            try:
+                self.loa[i][1] = (pos[0]+int(self.eventRing*math.cos(self.loa[i][1])),pos[1]+int(self.eventRing*math.sin(self.loa[i][1])))
+            except:
+                pass
 
     def draw(self):
         """Draws the days and events of this week"""
@@ -120,33 +124,39 @@ class Week(object):
         pygame.draw.circle(window, self.inncolor, self.position, self.innRadius)
         
         for i in range(len(self.loa)):
-            eventColor = self.loa[i][2]
+            eventColor = self.loa[i][0].color
             if self.loa[i] == self.active:
                 eventColor = (199, 64, 45)
             pygame.draw.circle(window, eventColor, self.loa[i][1] , self.eventRadius)
-            name = self.font.render(self.loa[i][0].name, 10, self.loa[i][2])
+            name = self.font.render(self.loa[i][0].name, 10, self.loa[i][0].color)
             window.blit(name, (self.loa[i][1][0]-15, self.loa[i][1][1]+10))
 
         if len(self.active) != 0:
-            centerTitle = self.bigFont.render(self.active[0].name, 10, BLUE)
-            window.blit(centerTitle, (self.position[0]-(centerTitle.get_width()//2), self.position[1]))
-            duration = "start: {} end: {}".format(self.active[0].start, self.active[0].end)
-            frequency = "frequency: every {} days".format(self.active[0].freq)
-            streak = "streak: every {} days".format(self.active[0].streak)
-            lateness =  "average lateness: {}".format(self.active[0].avgStartDiff)
+            centerTitle = self.bigFont.render(self.active[0].name, 40, BLUE)
+            window.blit(centerTitle, (self.position[0]-(centerTitle.get_width()//2), self.position[1]-80))
+            activityInfo = "{} at {}".format(main.readDate(self.active[2]), self.active[0].time)
+            mainDetails = self.bigFont.render(activityInfo,40, BLUE)
+            window.blit(mainDetails, (self.position[0]-(mainDetails.get_width()//2), self.position[1]-50))
+            start = "You started {} on {}, {} ".format(self.active[0].name,main.readDate(self.active[0].start), self.active[0].start.year)
+            end = "You plan to stop {} on {}, {} ".format(self.active[0].name,main.readDate(self.active[0].end), self.active[0].end.year)
+            frequency = "You do this every {} days".format(self.active[0].freq)
+            streak = "You havent missed {} for {} days".format(self.active[0].name,self.active[0].streak)
+            lateness =  "On average, you do this {} minutes off".format(self.active[0].avgStartDiff)
                      
-            surfDuration = self.font.render(duration, 10, BLUE) 
-            surfFrequency = self.font.render(frequency, 10, BLUE) 
-            surfStreak = self.font.render(streak, 10, BLUE) 
-            surfLateness = self.font.render(lateness, 10, BLUE) 
+            surfStart = self.font.render(start, 40, BLUE) 
+            surfEnd = self.font.render(end, 40, BLUE)
+            surfFrequency = self.font.render(frequency, 40, BLUE) 
+            surfStreak = self.font.render(streak, 40, BLUE) 
+            surfLateness = self.font.render(lateness, 40, BLUE) 
 
-            window.blit(surfDuration, (self.position[0]-(surfDuration.get_width()//2), self.position[1]+30))
-            window.blit(surfFrequency, (self.position[0]-(surfFrequency.get_width()//2), self.position[1]+50))
-            window.blit(surfStreak, (self.position[0]-(surfStreak.get_width()//2), self.position[1]+70))
-            window.blit(surfLateness, (self.position[0]-(surfLateness.get_width()//2), self.position[1]+90))
+            window.blit(surfStart, (self.position[0]-(surfStart.get_width()//2), self.position[1]))
+            window.blit(surfEnd, (self.position[0]-(surfEnd.get_width()//2), self.position[1]+20))
+            window.blit(surfFrequency, (self.position[0]-(surfFrequency.get_width()//2), self.position[1]+40))
+            window.blit(surfStreak, (self.position[0]-(surfStreak.get_width()//2), self.position[1]+60))
+            window.blit(surfLateness, (self.position[0]-(surfLateness.get_width()//2), self.position[1]+80))
         
     def eventInfo(self, mousex, mousey):
-        """When you click on a event (as represented by a circle)
+        """When you hover on a event (as represented by a circle)
         the event infor is listed, which is extracted from the object"""
         for i in range(len(self.loa)):    
             x = self.loa[i][1][0]
@@ -154,6 +164,18 @@ class Week(object):
             d = math.sqrt((x-mousex)**2 + (y-mousey)**2)
             if d <= 5:
                 self.active = self.loa[i]
+
+    def eventEdit(self, mousex, mousey):
+        """When you hover on a event (as represented by a circle)
+        the event infor is listed, which is extracted from the object"""
+        for i in range(len(self.loa)):    
+            x = self.loa[i][1][0]
+            y = self.loa[i][1][1] 
+            d = math.sqrt((x-mousex)**2 + (y-mousey)**2)
+            if d <= 5:
+                self.active = []
+                self.draw()
+                self.getNewEventInfo(self.loa[i][0])
 
     def getInput(self, prompt, pos):
         promptSurface = self.font.render(prompt,100,WHITE)
@@ -173,42 +195,75 @@ class Week(object):
                         wordSurface = self.font.render(word,100,BLACK)
                         window.blit(wordSurface, (pos[0], pos[1]+30))
                         pygame.display.flip()
-
-
         return word
 
     def getUncheckEvents(self):
-        unchecked = self.sched.getTimeFrame(datetime.datetime(2018,7,16), datetime.datetime.today())
-        print(unchecked)
+        unchecked = self.sched.getTimeFrame(datetime.datetime(2018,7,23), datetime.datetime.today())
+        print(len(unchecked))
+        print('unchecked:\n', [[x[0].name, x[1]] for x in unchecked])
         for x in unchecked:
             self.eventCheck(x[0],x[1])
     
     def eventCheck(self, event, dt):
-        check = self.getInput("Did you " + event.name + " at " + str(datetime.time(dt.hour,dt.minute)) + " on " + str(dt.weekday()) + "? ", self.position)
-        if check == "Yes":
+        check = self.getInput("Did you " + event.name + " at " + str(datetime.time(dt.hour,dt.minute)) + " on " + main.readDate(dt) + "? ", \
+        ((self.radius//3)*2+120, self.position[1]))
+        if "y" in check:
             event.streak += 1
             return True
-        elif check == "No":
+        else:
             event.streak = 0
             return False
     
+    def removeEditedEvent(self, event):
+        self.sched.schedList = [x for x in self.sched.schedList if event not in x[0]]
+        print(self.sched.schedList)
 
+    def getNewEventInfo(self,event):
+        self.startChange(event)
+        self.endChange(event)
+        self.freqChange(event)
+        self.sched.addEvent(event)
+        self.sched.getWeek()
+        self.sched.saveSchedule()
 
-#self.active[0].freq
+    def startChange(self, event):
+        newStart = self.getInput("How many days from now do you want to restart your cycle? ", self.position)
+        if newStart != 'x':
+            event.start = datetime.datetime.today() + datetime.timedelta(days=int(newStart))
+
+    def endChange(self, event):
+        newEnd = self.getInput("How days do you want to do this for? ", self.position)
+        if newEnd != 'x':
+            event.end = event.start + datetime.timedelta(days=int(newEnd))
+
+    def freqChange(self, event):
+        newFreq = self.getInput("New frequency: ", self.position)
+        if newFreq != 'x':
+            event.freq = int(newFreq)
 
 LoE = []
 w = Week(LoE, pos)
 w.Cartesian()
 w.Color()
 
+testDay = datetime.datetime(2018,7,20)
+
 while True:
     w.draw()
-    if datetime.datetime.today() != datetime.datetime(2018,7,16):
+    if datetime.date.today() != testDay:
         w.getUncheckEvents()
+        testDay = datetime.date.today()
     for event in pygame.event.get():
         if event.type == pygame.MOUSEMOTION:
             mousex, mousey = event.pos
             w.eventInfo(mousex, mousey)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mousex, mousey = event.pos
+            w.eventEdit(mousex, mousey)
+            w.sched.loadSchedule()
+            w.Cartesian()
+            w.Color()
+
 
     pygame.display.flip()
 pygame.quit()

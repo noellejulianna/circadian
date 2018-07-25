@@ -2,7 +2,7 @@ import datetime
 
 class EventGen(object):
 
-    def __init__(self, name, start, end, freq):
+    def __init__(self, name, start, end, freq, color):
         """
         Construct a Event info with the given month, day, and year
         time of day, and frequency of the event
@@ -20,6 +20,17 @@ class EventGen(object):
         self.streak = 0
         self.startDiffs = []
         self.avgStartDiff = 0
+        self.color = color
+
+
+    def __eq__(self, event):
+        if self.name == event.name and self.freq == event.freq and self.start == event.start:
+            return True
+        else:
+            return False
+
+    def __hash__(self):
+        return hash(self.name) ^ hash(self.freq) ^ hash(self.start)
 
     def genSeq(self):
         """

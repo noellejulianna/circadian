@@ -21,3 +21,4 @@ how the unpickled week works:
         week[0][1].minute = minute time that event occurs in the day
 
 
+#timing in the day is off!!!

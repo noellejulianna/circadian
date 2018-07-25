@@ -24,21 +24,11 @@ def editEvent(allEvents,newEvent):
                 x.freq = newEvent.freq
 
 def readDate(dt):
-    if dt.weekday() == 0:
-        day = 'Monday'
-    elif dt.weekday() == 1:
-        day = 'Tuesday'
-    elif dt.weekday() == 2:
-        day = 'Wednesday'
-    elif dt.weekday() == 3:
-        day = 'Thursday'
-    elif dt.weekday() == 4: 
-        day = 'Friday'
-    elif dt.weekday() == 5:
-        day = 'Saturday'
-    elif dt.weekday() == 6:
-        day = 'Sunday'
-    return '{}{}{}'.format()
+    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] 
+    dayOfWeek = days[dt.weekday()]
+    month = months[dt.month-1]
+    return '{} {} {}'.format(dayOfWeek,month,str(dt.day))
 
 def overallStreak(allEvents):
     """
@@ -78,6 +68,18 @@ def loadSchedule():
         return sched
     except:
         return 0
+
+def removeDups(lst):
+    """
+    Removes duplicate events in a schedule list
+    """
+    if len(lst) <= 1:
+        return lst
+    else:
+        if lst[0] in lst[1:]:
+            return removeDups(lst[1:])
+        else:
+            return [lst[0]] + removeDups(lst[1:])
 
 #def main():
     #load up last info

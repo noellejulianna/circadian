@@ -46,7 +46,7 @@ class Schedule(object):
                 newDate = x.start + nth
                 fullDate = datetime.datetime(newDate.year,newDate.month,newDate.day,x.hour,x.minute)
                 if fullDate > self.end:
-                    continue
+                    break
                 elif fullDate < self.start:
                     continue
                 else:
@@ -55,6 +55,7 @@ class Schedule(object):
         for b in eventsFinal:
             self.schedList.append([b[0],b[1]])
             #self.schedList.append('To {} on day {} on the date {} at {}.\r\n'.format(b[0],days[b[1].weekday()],b[1].date(),b[1].time()))
+        self.schedList = main.removeDups(self.schedList)
         return self.schedList
     
     def getWeek(self):
@@ -64,6 +65,7 @@ class Schedule(object):
         today = datetime.datetime.today()
         self.start = datetime.datetime(today.year,today.month,today.day)
         self.end = self.start + datetime.timedelta(days=7)
+        self.schedList = []
         self.createSchedule()
         return self.schedList
 
@@ -73,6 +75,7 @@ class Schedule(object):
         """
         self.start = start
         self.end = end
+        self.schedList = []
         self.createSchedule()
         return self.schedList
 
@@ -102,7 +105,8 @@ class Schedule(object):
         """
         Loads the schedule to the app.
         """
-        self.schedList = pickle.load("circadianInfo.txt", "rb")
+        self.schedList = []
+        self.schedList = pickle.load(open("circadianInfo.txt", "rb"))['SchedList']
 
     def addEvent(self, newEvent):
         """
