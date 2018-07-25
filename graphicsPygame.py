@@ -16,7 +16,7 @@ lastCheck = unpickled['LastCheck']
 # Screen dimensions
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 800
-background_color = (241,228,179)
+background_color = (172,160,185)
 listScreen = [SCREEN_WIDTH, SCREEN_HEIGHT]
 
 # display screen
@@ -28,14 +28,16 @@ pos = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
 
 # Colors
 BLACK = (0, 0, 0)
-WHEEL = (21,149,159)
-WHITE = (255, 255, 255)
+WHEEL = (234, 235, 242)
+WHITE = (234, 235, 242)
 GREEN = (0, 100, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (200,100,0) 
-LINE = (19,48,70)
-CORAL = (236,151,112)
+LINE = (112,132,164)
+INNER = (112,132,164)
+DAYS = (57,79,99)
+INPUT = (79,73,85)
 
 # week class
 # keeps track of days and events in week and displays
@@ -48,7 +50,7 @@ class Week(object):
         self.position = pos
         self.color = WHEEL
         self.radius = 300
-        self.inncolor = CORAL
+        self.inncolor = INNER
         self.innRadius = (self.radius//3)*2
         self.tdplusfour = (pos[0], pos[1] + self.radius)
         self.tdplusfive = (pos[0] + self.radius*math.sin(math.radians(51.4+180)), pos[1] - self.radius*math.cos(math.radians(51.4+180)))
@@ -58,27 +60,15 @@ class Week(object):
         self.tdplustwo = (pos[0] - self.radius*math.cos(math.radians(12.8+180)), pos[1] + self.radius*math.sin(math.radians(12.8+180)))
         self.tdplusthree = (pos[0] - self.radius*math.sin(math.radians(51.4+180)), pos[1] - self.radius*math.cos(math.radians(51.4+180)))
         #self.font = pygame.font.Font("sunmed.ttf", 12)
-        self.font = pygame.font.SysFont("Times", 14)
-        self.bigFont = pygame.font.SysFont("Times", 24)
+        self.inputFont = pygame.font.Font("RalewayInput.ttf", 14)
+        self.font = pygame.font.Font("Raleway.ttf", 14)
+        self.bigFont = pygame.font.Font("Roboto.ttf", 24)
         # constants for plotting schedule
         self.eventRing = (self.radius+self.innRadius)//2
         self.eventRadius = 5
         self.active = []
         self.sched = Schedule([x[0] for x in week])
         self.sched.getWeek()
-
-    def Color(self):
-        """Assigns and keeps track of unique color per event"""
-        lon = {}
-        for i in range(len(self.loa)):
-            if self.loa[i][0] not in lon:
-                r = random.randint(10, 25)*10
-                g = random.randint(10, 25)*10
-                b = random.randint(10, 25)*10
-                lon[self.loa[i][0]] = (r, g, b)
-                self.loa[i].append((r,g,b))
-            else:
-                self.loa[i].append(lon[self.loa[i][0]])
                 
     def Cartesian(self):
         # translated from time in day to x-y coordiantes
@@ -129,10 +119,10 @@ class Week(object):
             window.blit(name, (self.loa[i][1][0]-15, self.loa[i][1][1]+10))
 
         if len(self.active) != 0:
-            centerTitle = self.bigFont.render(self.active[0].name, 40, BLUE)
+            centerTitle = self.bigFont.render(self.active[0].name, 40, WHITE)
             window.blit(centerTitle, (self.position[0]-(centerTitle.get_width()//2), self.position[1]-80))
             activityInfo = "{} at {}".format(main.readDate(self.active[2]), self.active[0].time)
-            mainDetails = self.bigFont.render(activityInfo,40, BLUE)
+            mainDetails = self.bigFont.render(activityInfo,40, WHITE)
             window.blit(mainDetails, (self.position[0]-(mainDetails.get_width()//2), self.position[1]-50))
             start = "You started {} on {}, {} ".format(self.active[0].name,main.readDate(self.active[0].start), self.active[0].start.year)
             end = "You plan to stop {} on {}, {} ".format(self.active[0].name,main.readDate(self.active[0].end), self.active[0].end.year)
@@ -140,11 +130,11 @@ class Week(object):
             streak = "You havent missed {} for {} days".format(self.active[0].name,self.active[0].streak)
             lateness =  "On average, you do this {} minutes off".format(self.active[0].avgStartDiff)
                      
-            surfStart = self.font.render(start, 40, BLUE) 
-            surfEnd = self.font.render(end, 40, BLUE)
-            surfFrequency = self.font.render(frequency, 40, BLUE) 
-            surfStreak = self.font.render(streak, 40, BLUE) 
-            surfLateness = self.font.render(lateness, 40, BLUE) 
+            surfStart = self.font.render(start, 40, WHITE) 
+            surfEnd = self.font.render(end, 40, WHITE)
+            surfFrequency = self.font.render(frequency, 40, WHITE) 
+            surfStreak = self.font.render(streak, 40, WHITE) 
+            surfLateness = self.font.render(lateness, 40, WHITE) 
 
             window.blit(surfStart, (self.position[0]-(surfStart.get_width()//2), self.position[1]))
             window.blit(surfEnd, (self.position[0]-(surfEnd.get_width()//2), self.position[1]+20))
@@ -176,11 +166,10 @@ class Week(object):
             elif n == 6:
                 return "Sunday"
 
-
         # label days on pie, rotate days for today to  be at the top,
         # a for loop could also be used
         current = datetime.datetime.today()
-        today = self.bigFont.render(wname(current.weekday()), 10, BLUE)
+        today = self.bigFont.render(wname(current.weekday()), 40, DAYS)
         # rotate day name to be tangent to pie
         # rotate (surface, angle)
         rtd = pygame.transform.rotate(today, 0)
@@ -188,32 +177,32 @@ class Week(object):
         window.blit(rtd, (self.td[0] +85, self.td[1]- 60))
 
         # today plus one    
-        todayplus1 = self.bigFont.render(wname((current+datetime.timedelta(days=1)).weekday()), 10, BLUE)
+        todayplus1 = self.bigFont.render(wname((current+datetime.timedelta(days=1)).weekday()), 40, DAYS)
         rtdplus1 = pygame.transform.rotate(todayplus1, 305)
         window.blit(rtdplus1, (self.tdplusone[0] + 90, self.tdplusone[1]+35))
 
         # today plus two           
-        todayplus2 = self.bigFont.render(wname((current+datetime.timedelta(days=2)).weekday()), 10, BLUE)
+        todayplus2 = self.bigFont.render(wname((current+datetime.timedelta(days=2)).weekday()), 40, DAYS)
         rtdplus2 = pygame.transform.rotate(todayplus2, 260)
         window.blit(rtdplus2, (self.tdplustwo[0] + 5, self.tdplustwo[1] + 90))
 
         # today plus threes
-        todayplus3 = self.bigFont.render(wname((current+datetime.timedelta(days=3)).weekday()), 10, BLUE)
+        todayplus3 = self.bigFont.render(wname((current+datetime.timedelta(days=3)).weekday()), 40, DAYS)
         rtdplus3 = pygame.transform.rotate(todayplus3, 210)
         window.blit(rtdplus3, (self.tdplusthree[0] - 110, self.tdplusthree[1] + 65))
 
         # today plus four
-        todayplus4 = self.bigFont.render(wname((current+datetime.timedelta(days=4)).weekday()), 10, BLUE)
+        todayplus4 = self.bigFont.render(wname((current+datetime.timedelta(days=4)).weekday()), 40, DAYS)
         rtdplus4 = pygame.transform.rotate(todayplus4, 160)
         window.blit(rtdplus4, (self.tdplusfour[0]- 170, self.tdplusfour[1] - 30))
 
         # today plus five
-        todayplus5 = self.bigFont.render(wname((current+datetime.timedelta(days=5)).weekday()), 10, BLUE)
+        todayplus5 = self.bigFont.render(wname((current+datetime.timedelta(days=5)).weekday()), 40, DAYS)
         rtdplus5 = pygame.transform.rotate(todayplus5, 105)
         window.blit(rtdplus5, (self.tdplusfive[0] - 100, self.tdplusfive[1] - 155))
 
         # today plus six
-        todayplus6 = self.bigFont.render(wname((current+datetime.timedelta(days=6)).weekday()), 10, BLUE)
+        todayplus6 = self.bigFont.render(wname((current+datetime.timedelta(days=6)).weekday()), 40, DAYS)
         rtdplus6 = pygame.transform.rotate(todayplus6, 60)
         window.blit(rtdplus6, (self.tdplusfive[0] - 65, self.tdplussix[1] - 155))
 
@@ -242,10 +231,10 @@ class Week(object):
 
     def getInput(self, prompt, pos):
         promptSurface = self.font.render(prompt,100,WHITE)
-        window.blit(promptSurface, pos)
+        window.blit(promptSurface, (pos[0]-promptSurface.get_width()//2, pos[1]))
         pygame.display.flip()
         word=""
-        wordSurface = self.font.render(word,100,BLACK)
+        wordSurface = self.inputFont.render(word,100,INPUT)
         done = True
         while done:
             for event in pygame.event.get():
@@ -255,36 +244,42 @@ class Week(object):
                         self.draw()
                     else:
                         word+=chr(event.key)
-                        wordSurface = self.font.render(word,100,BLACK)
-                        window.blit(wordSurface, (pos[0], pos[1]+30))
+                        wordSurface = self.inputFont.render(word,100,INPUT)
+                        window.blit(wordSurface, (pos[0]-wordSurface.get_width()//2, pos[1]+30))
                         pygame.display.flip()
         return word
 
     def getUncheckEvents(self):
         unchecked = self.sched.getTimeFrame(datetime.datetime(2018,7,23), datetime.datetime.today())
-        print(len(unchecked))
-        print('unchecked:\n', [[x[0].name, x[1]] for x in unchecked])
         for x in unchecked:
             self.eventCheck(x[0],x[1])
     
     def eventCheck(self, event, dt):
-        check = self.getInput("Did you " + event.name + " at " + str(datetime.time(dt.hour,dt.minute)) + " on " + main.readDate(dt) + "? ", \
-        ((self.radius//3)*2+120, self.position[1]))
+        check = self.getInput("Did you " + event.name + " at " + str(datetime.time(dt.hour,dt.minute)) + " on " + main.readDate(dt) + "? ",pos)
         if "y" in check:
             event.streak += 1
+            self.getTimeChange(event)
             return True
         else:
             event.streak = 0
             return False
     
+    def getTimeChange(self, event):
+        timeChange = self.getInput("How many minutes -/+" + str(event.time) + " did you do " + event.name + " ? ", pos)
+        main.updateAvgStart(event,int(timeChange))
+        print(event.startDiffs)
+        print(event.avgStartDiff)
+        self.sched.getWeek()
+        self.sched.saveSchedule()
+    
     def removeEditedEvent(self, event):
-        self.sched.schedList = [x for x in self.sched.schedList if event not in x[0]]
-        print(self.sched.schedList)
+        self.sched.schedList = [x for x in self.sched.schedList if event != x[0]]
 
     def getNewEventInfo(self,event):
         self.startChange(event)
         self.endChange(event)
         self.freqChange(event)
+        self.removeEditedEvent(event)
         self.sched.addEvent(event)
         self.sched.getWeek()
         self.sched.saveSchedule()
@@ -307,7 +302,6 @@ class Week(object):
 LoE = []
 w = Week(LoE, pos)
 w.Cartesian()
-w.Color()
 
 testDay = datetime.datetime(2018,7,20)
 
@@ -323,11 +317,9 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mousex, mousey = event.pos
             w.eventEdit(mousex, mousey)
+            w = Week([], pos)
             w.sched.loadSchedule()
             w.Cartesian()
-            w.Color()
-
-
     pygame.display.flip()
 pygame.quit()
 
