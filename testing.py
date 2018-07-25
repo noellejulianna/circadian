@@ -18,7 +18,7 @@ kombucha = eventgen.EventGen('Kombucha', kombuchastart,kombuchaend,2, (165,180,8
 
 coconutoilstart = datetime.datetime(2018,6,19,12,30)
 coconutoilend = datetime.datetime(2019,6,19,12,30)
-coconutoil = eventgen.EventGen('Coconut )il',coconutoilstart,coconutoilend,7, (244,211,94))
+coconutoil = eventgen.EventGen('Coconut Oil',coconutoilstart,coconutoilend,7, (244,211,94))
 
 sched = schedule.Schedule([coconutoil,workout,shampoo])
 sched.addEvent(kombucha)

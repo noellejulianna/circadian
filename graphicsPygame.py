@@ -30,10 +30,6 @@ pos = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
 BLACK = (0, 0, 0)
 WHEEL = (234, 235, 242)
 WHITE = (234, 235, 242)
-GREEN = (0, 100, 0)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-PINK = (200,100,0) 
 LINE = (112,132,164)
 INNER = (112,132,164)
 DAYS = (57,79,99)
@@ -59,7 +55,6 @@ class Week(object):
         self.tdplusone = (pos[0] - self.radius*math.sin(math.radians(25.8+180)), pos[1] + self.radius*math.cos(math.radians(25.8+180)))
         self.tdplustwo = (pos[0] - self.radius*math.cos(math.radians(12.8+180)), pos[1] + self.radius*math.sin(math.radians(12.8+180)))
         self.tdplusthree = (pos[0] - self.radius*math.sin(math.radians(51.4+180)), pos[1] - self.radius*math.cos(math.radians(51.4+180)))
-        #self.font = pygame.font.Font("sunmed.ttf", 12)
         self.inputFont = pygame.font.Font("RalewayInput.ttf", 14)
         self.font = pygame.font.Font("Raleway.ttf", 14)
         self.bigFont = pygame.font.Font("Roboto.ttf", 24)
@@ -80,20 +75,22 @@ class Week(object):
         self.eventRing = (self.radius+self.innRadius)//2
         self.today = datetime.datetime.today()
         self.start = self.sched.schedList[0][1].weekday()
+        #An item in loa = [event object, angular position, specific datetime object of event]
         for i in range(len(self.sched.schedList)):
             self.loa += [[self.sched.schedList[i][0],self.sched.schedList[i][1].hour/24 + (self.sched.schedList[i][1].weekday() - self.today.weekday()-2.25), self.sched.schedList[i][1]]]
         for i in range(len(self.loa)):
+            #Take the angular position, get fraction and turn it to a polar position
             try:
                 self.loa[i][1] = self.loa[i][1]/7*(2*3.14)
             except:
                 pass
-        
-        # translate polar to cartesian
+        #Translate polar to cartesian
         # x = r × cos( θ )
         # y = r × sin( θ )
         for i in range(len(self.loa)):
             try:
                 self.loa[i][1] = (pos[0]+int(self.eventRing*math.cos(self.loa[i][1])),pos[1]+int(self.eventRing*math.sin(self.loa[i][1])))
+                #All loa item[1]'s are cartesian positions now
             except:
                 pass
 
@@ -113,12 +110,13 @@ class Week(object):
         for i in range(len(self.loa)):
             eventColor = self.loa[i][0].color
             if self.loa[i] == self.active:
-                eventColor = (199, 64, 45)
+                eventColor = INNER
+            #Draws the dot to represent an event
             pygame.draw.circle(window, eventColor, self.loa[i][1] , self.eventRadius)
             name = self.font.render(self.loa[i][0].name, 10, self.loa[i][0].color)
-            window.blit(name, (self.loa[i][1][0]-25, self.loa[i][1][1]+5))
+            window.blit(name, (self.loa[i][1][0]-name.get_width()//2, self.loa[i][1][1]+5)) #Event name position
 
-        if len(self.active) != 0:
+        if len(self.active) != 0: #Previewing event info
             centerTitle = self.bigFont.render(self.active[0].name, 40, WHITE)
             window.blit(centerTitle, (self.position[0]-(centerTitle.get_width()//2), self.position[1]-80))
             activityInfo = "{} at {}".format(main.readDate(self.active[2]), self.active[0].time)
@@ -148,7 +146,6 @@ class Week(object):
         streak =  self.bigFont.render(stringStreak + " days", 40, WHITE)
         window.blit(streak, ((self.position[0]-streak.get_width()//2), (self.position[1]-1.25*self.radius)))
 
-             
         # weekday helper function
         def wname(n):
             if n == 0:
@@ -217,8 +214,8 @@ class Week(object):
                 self.active = self.loa[i]
 
     def eventEdit(self, mousex, mousey):
-        """When you hover on a event (as represented by a circle)
-        the event infor is listed, which is extracted from the object"""
+        """Called when an event is clicked and activates the protocols
+        for getting the edits that the user wants"""
         for i in range(len(self.loa)):    
             x = self.loa[i][1][0]
             y = self.loa[i][1][1] 
@@ -229,6 +226,9 @@ class Week(object):
                 self.getNewEventInfo(self.loa[i][0])
 
     def getInput(self, prompt, pos):
+        """Draws a surface for any prompt to be written, and displays the user input
+        as it is being typed
+        """
         promptSurface = self.font.render(prompt,100,WHITE)
         window.blit(promptSurface, (pos[0]-promptSurface.get_width()//2, pos[1]))
         pygame.display.flip()
@@ -252,11 +252,15 @@ class Week(object):
         return word
 
     def getUncheckEvents(self):
-        unchecked = self.sched.getTimeFrame(datetime.datetime(2018,7,23), datetime.datetime.today())
+        """Creates a list of all the unchecked events between now and the last time events were confirmed
+        """
+        unchecked = self.sched.getTimeFrame(testDay, datetime.datetime.today())
         for x in unchecked:
             self.eventCheck(x[0],x[1])
     
     def eventCheck(self, event, dt):
+        """Uses the getInput function to ask whether an event was done or not
+        """
         check = self.getInput("Did you " + event.name + " at " + str(datetime.time(dt.hour,dt.minute)) + " on " + main.readDate(dt) + "? ",pos)
         if "y" in check:
             event.streak += 1
@@ -267,6 +271,9 @@ class Week(object):
             return False
     
     def getTimeChange(self, event):
+        """Is activated when people confirm that they have done an event
+        Gets the number of minutes off that the event was started and updates the average earliness/lateness info
+        with this information"""
         timeChange = self.getInput("How many minutes -/+" + str(event.time) + " did you do " + event.name + " ? ", pos)
         event.startDiffs.append(int(timeChange))
         event.avgStartDiff = (sum(event.startDiffs))//len(event.startDiffs)
@@ -274,9 +281,15 @@ class Week(object):
         self.sched.saveSchedule()
     
     def removeEditedEvent(self, event):
+        """Clears existing instances of an event after it has been edited
+        """
         self.sched.schedList = [x for x in self.sched.schedList if event != x[0]]
 
     def getNewEventInfo(self,event):
+        """Runs all of the functions that could change event info, clears all old event info,
+        adds the event's new info and generates a week with it
+        saves schedule
+        """
         self.startChange(event)
         self.endChange(event)
         self.freqChange(event)
@@ -286,16 +299,19 @@ class Week(object):
         self.sched.saveSchedule()
 
     def startChange(self, event):
+        """Edits start change"""
         newStart = self.getInput("How many days from now do you want to restart your cycle? ", self.position)
         if newStart != 'x':
             event.start = datetime.datetime.today() + datetime.timedelta(days=int(newStart))
 
     def endChange(self, event):
+        """Edits end change"""
         newEnd = self.getInput("How days do you want to do this for? ", self.position)
         if newEnd != 'x':
             event.end = event.start + datetime.timedelta(days=int(newEnd))
 
     def freqChange(self, event):
+        """Edits frequency change"""
         newFreq = self.getInput("New frequency: ", self.position)
         if newFreq != 'x':
             event.freq = int(newFreq)
@@ -304,7 +320,7 @@ LoE = []
 w = Week(LoE, pos)
 w.Cartesian()
 
-testDay = datetime.datetime(2018,7,20)
+testDay = datetime.datetime(2018,7,24)
 
 while True:
     w.draw()
@@ -323,5 +339,3 @@ while True:
             w.Cartesian()
     pygame.display.flip()
 pygame.quit()
-
-
