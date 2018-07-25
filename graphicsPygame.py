@@ -168,8 +168,7 @@ class Week(object):
                 return "Saturday"
             elif n == 6:
                 return "Sunday"
-
-
+                
         # label days on pie, rotate days for today to  be at the top,
         # a for loop could also be used
         current = datetime.datetime.today()
@@ -255,8 +254,6 @@ class Week(object):
 
     def getUncheckEvents(self):
         unchecked = self.sched.getTimeFrame(datetime.datetime(2018,7,23), datetime.datetime.today())
-        print(len(unchecked))
-        print('unchecked:\n', [[x[0].name, x[1]] for x in unchecked])
         for x in unchecked:
             self.eventCheck(x[0],x[1])
     
@@ -271,13 +268,14 @@ class Week(object):
             return False
     
     def removeEditedEvent(self, event):
-        self.sched.schedList = [x for x in self.sched.schedList if event not in x[0]]
-        print(self.sched.schedList)
+        self.sched.schedList = [x for x in self.sched.schedList if event != x[0]]
+        print([[x[0].name, x[1]] for x in self.sched.schedList])
 
     def getNewEventInfo(self,event):
         self.startChange(event)
         self.endChange(event)
         self.freqChange(event)
+        self.removeEditedEvent(event)
         self.sched.addEvent(event)
         self.sched.getWeek()
         self.sched.saveSchedule()
@@ -316,9 +314,11 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mousex, mousey = event.pos
             w.eventEdit(mousex, mousey)
+            w = Week([], pos)
             w.sched.loadSchedule()
             w.Cartesian()
             w.Color()
+                
 
 
     pygame.display.flip()
