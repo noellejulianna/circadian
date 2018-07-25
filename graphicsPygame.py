@@ -170,12 +170,12 @@ class Week(object):
         window.blit(rtd, (self.td[0] +85, self.td[1]- 60))
 
         # today plus one    
-        todayplus1 = self.bigFont.render(wname((current+datetime.timedelta(days=1)).weekday()), 40, DAYS)
+        todayplus1 = self.bigFont.render(wname((current+datetime.timedelta(days=1)).weekday()), 100, DAYS)
         rtdplus1 = pygame.transform.rotate(todayplus1, 305)
         window.blit(rtdplus1, (self.tdplusone[0] + 90, self.tdplusone[1]+35))
 
         # today plus two           
-        todayplus2 = self.bigFont.render(wname((current+datetime.timedelta(days=2)).weekday()), 40, DAYS)
+        todayplus2 = self.bigFont.render(wname((current+datetime.timedelta(days=2)).weekday()), 100, DAYS)
         rtdplus2 = pygame.transform.rotate(todayplus2, 260)
         window.blit(rtdplus2, (self.tdplustwo[0] + 5, self.tdplustwo[1] + 90))
 
@@ -237,9 +237,12 @@ class Week(object):
                         self.draw()
                     else:
                         word+=chr(event.key)
+                        promptSurface = self.font.render(prompt,100,WHITE)
+                        window.blit(promptSurface, (pos[0]-promptSurface.get_width()//2, pos[1]))
                         wordSurface = self.inputFont.render(word,100,INPUT)
                         window.blit(wordSurface, (pos[0]-wordSurface.get_width()//2, pos[1]+30))
                         pygame.display.flip()
+                        self.draw()
         return word
 
     def getUncheckEvents(self):
@@ -259,9 +262,8 @@ class Week(object):
     
     def getTimeChange(self, event):
         timeChange = self.getInput("How many minutes -/+" + str(event.time) + " did you do " + event.name + " ? ", pos)
-        main.updateAvgStart(event,int(timeChange))
-        print(event.startDiffs)
-        print(event.avgStartDiff)
+        event.startDiffs.append(int(timeChange))
+        event.avgStartDiff = (sum(event.startDiffs))//len(event.startDiffs)
         self.sched.getWeek()
         self.sched.saveSchedule()
     
