@@ -81,8 +81,7 @@ class Week(object):
         self.today = datetime.datetime.today()
         self.start = self.sched.schedList[0][1].weekday()
         for i in range(len(self.sched.schedList)):
-            self.loa += [[self.sched.schedList[i][0],self.sched.schedList[i][1].hour/24 + (self.sched.schedList[i][1].weekday() - self.today.weekday()), self.sched.schedList[i][1]]]
-
+            self.loa += [[self.sched.schedList[i][0],self.sched.schedList[i][1].hour/24 + (self.sched.schedList[i][1].weekday() - self.today.weekday()-2.25), self.sched.schedList[i][1]]]
         for i in range(len(self.loa)):
             try:
                 self.loa[i][1] = self.loa[i][1]/7*(2*3.14)
@@ -100,6 +99,7 @@ class Week(object):
 
     def draw(self):
         """Draws the days and events of this week"""
+        window.fill(background_color)
         pygame.draw.circle(window, self.color, self.position, self.radius)
         pygame.draw.line(window, LINE, self.position, self.tdplusfour)
         pygame.draw.line(window, LINE, self.position, self.tdplusfive)
@@ -141,7 +141,14 @@ class Week(object):
             window.blit(surfFrequency, (self.position[0]-(surfFrequency.get_width()//2), self.position[1]+40))
             window.blit(surfStreak, (self.position[0]-(surfStreak.get_width()//2), self.position[1]+60))
             window.blit(surfLateness, (self.position[0]-(surfLateness.get_width()//2), self.position[1]+80))
-        
+
+        # display overall streak
+        streakCount = main.overallStreak([x[0] for x in self.loa])
+        stringStreak = str(streakCount)
+        streak =  self.bigFont.render(stringStreak, 40, BLUE)
+        window.blit(streak, ((self.position[0]), (self.position[1]-1.2*self.radius)))
+
+             
         # weekday helper function
         def wname(n):
             if n == 0:
@@ -317,3 +324,5 @@ while True:
             w.Cartesian()
     pygame.display.flip()
 pygame.quit()
+
+
