@@ -116,7 +116,7 @@ class Week(object):
                 eventColor = (199, 64, 45)
             pygame.draw.circle(window, eventColor, self.loa[i][1] , self.eventRadius)
             name = self.font.render(self.loa[i][0].name, 10, self.loa[i][0].color)
-            window.blit(name, (self.loa[i][1][0]-15, self.loa[i][1][1]+10))
+            window.blit(name, (self.loa[i][1][0]-25, self.loa[i][1][1]+5))
 
         if len(self.active) != 0:
             centerTitle = self.bigFont.render(self.active[0].name, 40, WHITE)
@@ -184,17 +184,17 @@ class Week(object):
         # today plus two           
         todayplus2 = self.bigFont.render(wname((current+datetime.timedelta(days=2)).weekday()), 100, DAYS)
         rtdplus2 = pygame.transform.rotate(todayplus2, 260)
-        window.blit(rtdplus2, (self.tdplustwo[0] + 5, self.tdplustwo[1] + 90))
+        window.blit(rtdplus2, (self.tdplustwo[0], self.tdplustwo[1] + 90))
 
         # today plus threes
         todayplus3 = self.bigFont.render(wname((current+datetime.timedelta(days=3)).weekday()), 100, DAYS)
         rtdplus3 = pygame.transform.rotate(todayplus3, 210)
-        window.blit(rtdplus3, (self.tdplusthree[0] - 110, self.tdplusthree[1] + 65))
+        window.blit(rtdplus3, (self.tdplusthree[0] - 130, self.tdplusthree[1] + 55))
 
         # today plus four
         todayplus4 = self.bigFont.render(wname((current+datetime.timedelta(days=4)).weekday()), 100, DAYS)
         rtdplus4 = pygame.transform.rotate(todayplus4, 160)
-        window.blit(rtdplus4, (self.tdplusfour[0]- 170, self.tdplusfour[1] - 30))
+        window.blit(rtdplus4, (self.tdplusfour[0]- 180, self.tdplusfour[1] - 40))
 
         # today plus five
         todayplus5 = self.bigFont.render(wname((current+datetime.timedelta(days=5)).weekday()), 100, DAYS)
@@ -204,7 +204,7 @@ class Week(object):
         # today plus six
         todayplus6 = self.bigFont.render(wname((current+datetime.timedelta(days=6)).weekday()), 100, DAYS)
         rtdplus6 = pygame.transform.rotate(todayplus6, 60)
-        window.blit(rtdplus6, (self.tdplusfive[0] - 65, self.tdplussix[1] - 155))
+        window.blit(rtdplus6, (self.tdplusfive[0] - 75, self.tdplussix[1] - 155))
 
     def eventInfo(self, mousex, mousey):
         """When you hover on a event (as represented by a circle)
