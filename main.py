@@ -55,10 +55,6 @@ def checkEvent(event,dt,weekCheck):
         event.streak = 0
         return False
 
-def checkTime(event,dt):
-    check = input("How early(-) or late(+) did you " + event.name + "?")
-    avgStartTime(event,check)
-
 def loadSchedule():
     """
     Loads the schedule to the app.
