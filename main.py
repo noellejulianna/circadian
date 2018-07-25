@@ -44,6 +44,7 @@ def updateAvgStart(event,time):
     Calculates the average lateness/earliest that an event occurs.
     """
     event.startDiffs.append(time)
+    print(sum(event.startDiffs), len(event.startDiffs))
     event.avgStartDiffs = (sum(event.startDiffs))//len(event.startDiffs)
 
 def checkEvent(event,dt,weekCheck):
