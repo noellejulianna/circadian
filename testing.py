@@ -37,6 +37,12 @@ sched.saveSchedule()
 # main.editEvent(sched.egInfo, coconutoil)
 # print(coconutoil.freq,coconutoil.start,coconutoil.end)
 
+<<<<<<< HEAD
 test = sched.getTimeFrame(datetime.datetime(2018,7,16), datetime.datetime.today())
 print([[x[0].name, x[1]] for x in test])
 print(len(test))
+=======
+# test = sched.getTimeFrame(datetime.datetime(2018,7,16), datetime.datetime.today())
+# print([[x[0].name, x[1]] for x in test])
+# print(len(test))
+>>>>>>> 48c28b6a100241b35d3287c300957473b47c3f9e
