@@ -26,17 +26,17 @@ sched.getWeek()
 
 sched.saveSchedule()
 
-cyclesNow = sched.findCyclePoint()
-print(cyclesNow)
+# cyclesNow = sched.findCyclePoint()
+# print(cyclesNow)
 
-#Edit testing
-print([x.name for x in sched.egInfo])
-coconutoilNewStart = datetime.datetime(2018,6,21,22)
-coconutoilNewEnd = datetime.datetime(2019,6,21,22)
-coconutoil = eventgen.EventGen('coconut oil', coconutoilNewStart,coconutoilNewEnd,5)
-main.editEvent(sched.egInfo, coconutoil)
-print(coconutoil.freq,coconutoil.start,coconutoil.end)
+# #Edit testing
+# print([x.name for x in sched.egInfo])
+# coconutoilNewStart = datetime.datetime(2018,6,21,22)
+# coconutoilNewEnd = datetime.datetime(2019,6,21,22)
+# coconutoil = eventgen.EventGen('coconut oil', coconutoilNewStart,coconutoilNewEnd,5)
+# main.editEvent(sched.egInfo, coconutoil)
+# print(coconutoil.freq,coconutoil.start,coconutoil.end)
 
-test = sched.getTimeFrame(datetime.datetime(2018,7,16), datetime.datetime.today())
-print([[x[0].name, x[1]] for x in test])
-print(len(test))
+# test = sched.getTimeFrame(datetime.datetime(2018,7,16), datetime.datetime.today())
+# print([[x[0].name, x[1]] for x in test])
+# print(len(test))
