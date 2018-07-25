@@ -145,8 +145,8 @@ class Week(object):
         # display overall streak
         streakCount = main.overallStreak([x[0] for x in self.loa])
         stringStreak = str(streakCount)
-        streak =  self.bigFont.render(stringStreak, 40, BLUE)
-        window.blit(streak, ((self.position[0]), (self.position[1]-1.2*self.radius)))
+        streak =  self.bigFont.render(stringStreak + " days", 40, WHITE)
+        window.blit(streak, ((self.position[0]-streak.get_width()//2), (self.position[1]-1.25*self.radius)))
 
              
         # weekday helper function
@@ -169,7 +169,7 @@ class Week(object):
         # label days on pie, rotate days for today to  be at the top,
         # a for loop could also be used
         current = datetime.datetime.today()
-        today = self.bigFont.render(wname(current.weekday()), 40, DAYS)
+        today = self.bigFont.render(wname(current.weekday()), 100, DAYS)
         # rotate day name to be tangent to pie
         # rotate (surface, angle)
         rtd = pygame.transform.rotate(today, 0)
@@ -187,25 +187,24 @@ class Week(object):
         window.blit(rtdplus2, (self.tdplustwo[0] + 5, self.tdplustwo[1] + 90))
 
         # today plus threes
-        todayplus3 = self.bigFont.render(wname((current+datetime.timedelta(days=3)).weekday()), 40, DAYS)
+        todayplus3 = self.bigFont.render(wname((current+datetime.timedelta(days=3)).weekday()), 100, DAYS)
         rtdplus3 = pygame.transform.rotate(todayplus3, 210)
         window.blit(rtdplus3, (self.tdplusthree[0] - 110, self.tdplusthree[1] + 65))
 
         # today plus four
-        todayplus4 = self.bigFont.render(wname((current+datetime.timedelta(days=4)).weekday()), 40, DAYS)
+        todayplus4 = self.bigFont.render(wname((current+datetime.timedelta(days=4)).weekday()), 100, DAYS)
         rtdplus4 = pygame.transform.rotate(todayplus4, 160)
         window.blit(rtdplus4, (self.tdplusfour[0]- 170, self.tdplusfour[1] - 30))
 
         # today plus five
-        todayplus5 = self.bigFont.render(wname((current+datetime.timedelta(days=5)).weekday()), 40, DAYS)
+        todayplus5 = self.bigFont.render(wname((current+datetime.timedelta(days=5)).weekday()), 100, DAYS)
         rtdplus5 = pygame.transform.rotate(todayplus5, 105)
         window.blit(rtdplus5, (self.tdplusfive[0] - 100, self.tdplusfive[1] - 155))
 
         # today plus six
-        todayplus6 = self.bigFont.render(wname((current+datetime.timedelta(days=6)).weekday()), 40, DAYS)
+        todayplus6 = self.bigFont.render(wname((current+datetime.timedelta(days=6)).weekday()), 100, DAYS)
         rtdplus6 = pygame.transform.rotate(todayplus6, 60)
         window.blit(rtdplus6, (self.tdplusfive[0] - 65, self.tdplussix[1] - 155))
-
 
     def eventInfo(self, mousex, mousey):
         """When you hover on a event (as represented by a circle)

@@ -39,23 +39,6 @@ def overallStreak(allEvents):
         allStreaks.append(x.streak)
     return min(allStreaks)
 
-def updateAvgStart(event,time):
-    """
-    Calculates the average lateness/earliest that an event occurs.
-    """
-    event.startDiffs.append(time)
-    print(sum(event.startDiffs), len(event.startDiffs))
-    event.avgStartDiffs = (sum(event.startDiffs))//len(event.startDiffs)
-
-def checkEvent(event,dt,weekCheck):
-    check = weekCheck.get("Did you " + event.name + " at " + datetime.time(dt.hour,dt.minute) + " on " + dt.weekday() + "? ")
-    if check == "Yes":
-        event.streak += 1
-        return True
-    elif check == "No":
-        event.streak = 0
-        return False
-
 def loadSchedule():
     """
     Loads the schedule to the app.
