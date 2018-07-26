@@ -37,6 +37,9 @@ INNER = (112,132,164)
 DAYS = (57,79,99)
 INPUT = (79,73,85)
 
+#window title
+pygame.display.set_caption('Circadian')
+
 # week class: keeps track of days and events in week and displays
 class Week(object):
     def __init__(self, LoE, pos):
