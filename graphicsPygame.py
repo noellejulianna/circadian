@@ -146,23 +146,6 @@ class Week(object):
         streak =  self.bigFont.render(stringStreak + " days", 40, WHITE)
         window.blit(streak, ((self.position[0]-streak.get_width()//2), (self.position[1]-1.25*self.radius)))
 
-        # weekday helper function
-        def wname(n):
-            if n == 0:
-                return "Monday"
-            elif n == 1:
-                return "Tuesday"
-            elif n == 2:
-                return "Wednesday"
-            elif n == 3:
-                return "Thursday"
-            elif n == 4:
-                return "Friday"
-            elif n == 5:
-                return "Saturday"
-            elif n == 6:
-                return "Sunday"
-
         # for loop for display of days
         # label days on pie, rotate days for today to  be at the top,
         current = datetime.datetime.today()
@@ -175,7 +158,7 @@ class Week(object):
         (self.tdplusthree[0] - 125, self.tdplusthree[1] + 60), (self.tdplusfour[0]- 180, self.tdplusfour[1] - 40), 
         (self.tdplusfive[0] - 100, self.tdplusfive[1] - 155), (self.tdplussix[0] - 25, self.tdplussix[1] - 175)]
         for x in position:
-            todayplus = self.bigFont.render(wname((current+datetime.timedelta(days=days)).weekday()), 100, DAYS)
+            todayplus = self.bigFont.render(main.wname((current+datetime.timedelta(days=days)).weekday()), 100, DAYS)
             rotated = pygame.transform.rotate(todayplus, angle)
             window.blit(rotated, x)
             days += 1
