@@ -58,7 +58,7 @@ class Week(object):
         self.tdplusthree = (pos[0] - self.radius*math.sin(math.radians(51.4+180)), pos[1] - self.radius*math.cos(math.radians(51.4+180)))
         self.inputFont = pygame.font.Font("RalewayInput.ttf", 14)
         self.font = pygame.font.Font("Raleway.ttf", 14)
-        self.bigFont = pygame.font.Font("Roboto.ttf", 24)
+        self.bigFont = pygame.font.Font("Roboto.ttf", 26)
         # constants for plotting schedule
         self.eventRing = (self.radius+self.innRadius)//2
         self.eventRadius = 5
@@ -148,21 +148,37 @@ class Week(object):
 
         # for loop for display of days
         # label days on pie, rotate days for today to  be at the top,
-        current = datetime.datetime.today()
+        #current = datetime.datetime.today()
+
+        # for testing other datetime objects
+        #current = datetime.datetime(2018, 7, 18)
+        #current = datetime.datetime(2018, 7, 19)
+        current = datetime.datetime(2018, 7, 20)
+        #current = datetime.datetime(2018, 7, 21)
+        #current = datetime.datetime(2018, 7, 22)
+        #current = datetime.datetime(2018, 7, 23)
+        #current = datetime.datetime(2018, 7, 24)
+
         # days variable
         days = 0
+        # common width for name surfaces variable
+        common = pygame.Surface((131, 50))
         # rotation angle
-        angle = 360
-        # position list
-        position = [(self.td[0] +85, self.td[1]- 60), (self.tdplusone[0] + 90, self.tdplusone[1]+35), (self.tdplustwo[0] - 10, self.tdplustwo[1] + 90),
-        (self.tdplusthree[0] - 125, self.tdplusthree[1] + 60), (self.tdplusfour[0]- 180, self.tdplusfour[1] - 40), 
-        (self.tdplusfive[0] - 100, self.tdplusfive[1] - 155), (self.tdplussix[0] - 25, self.tdplussix[1] - 175)]
+        angle = 0
+        # radius of day
+        radiusDay = self.radius + 20
+
+        position = []
+        theta = (2*math.pi)/7
+        for x in range(7):
+            position += [(self.position[0]+int(radiusDay*math.sin(theta*x)), self.position[1]-int(radiusDay*math.cos(theta*x)))]
+
         for x in position:
             todayplus = self.bigFont.render(main.wname((current+datetime.timedelta(days=days)).weekday()), 100, DAYS)
-            rotated = pygame.transform.rotate(todayplus, angle)
-            window.blit(rotated, x)
+            rotatetodayplus = pygame.transform.rotate(todayplus, -angle)
+            window.blit(rotatetodayplus, (x[0]-rotatetodayplus.get_width()//2, x[1]-rotatetodayplus.get_height()//2))
             days += 1
-            angle -= 51
+            angle += 51
 
     def eventInfo(self, mousex, mousey):
         """When you hover on a event (as represented by a circle)

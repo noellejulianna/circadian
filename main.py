@@ -24,7 +24,7 @@ def wname(n):
     """
     Converts datetime.weekday() output into the string of the weekday
     """
-    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    days = ['Monday', 'Tuesday' , 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     return days[n]
 
 def removeDups(lst):
