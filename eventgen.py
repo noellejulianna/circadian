@@ -2,7 +2,7 @@ import datetime
 
 class EventGen(object):
 
-    def __init__(self, name, start, end, freq, color):
+    def __init__(self, name, start, end, freq):
         """
         Construct a Event info with the given month, day, and year
         time of day, and frequency of the event
@@ -20,7 +20,7 @@ class EventGen(object):
         self.streak = 0
         self.startDiffs = []
         self.avgStartDiff = 0
-        self.color = color
+        self.color = ()
 
 
     def __eq__(self, event):
@@ -68,6 +68,7 @@ class EventGen(object):
         for x in range(len(daysList)):
             daysList[x] = days[daysList[x]]
         return daysList
+
 
     
     
