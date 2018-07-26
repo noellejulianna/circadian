@@ -27,7 +27,7 @@ class Schedule(object):
         self.month = start.month
         self.day = start.day
         self.year = start.year
-        self.eventColors = [(218,65,103),(180,99,73),(165,180,82),(178,154,69),(15,113,115),(84,69,127),(119,29,55),(51,24,50),(111,29,27)]
+        self.eventColors = [(137,53,77),(9,62,63),(106,115,53),(180,99,73),(191,160,56),(165,180,82),(15,113,115),(84,69,127),(46,38,70),(111,58,27)]
         self.egInfo = []
         if type(event) == list:
             for x in event:

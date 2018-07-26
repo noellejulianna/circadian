@@ -33,9 +33,12 @@ BLACK = (0, 0, 0)
 WHEEL = (234, 235, 242)
 WHITE = (234, 235, 242)
 LINE = (112,132,164)
-INNER = (112,132,164)
+INNER = (143,170,196)#(130,153,189)
 DAYS = (57,79,99)
 INPUT = (79,73,85)
+
+#window title
+pygame.display.set_caption('Circadian')
 
 # week class: keeps track of days and events in week and displays
 class Week(object):
