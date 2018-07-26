@@ -4,12 +4,14 @@ import datetime
 import pygame
 import random
 import main
+import eventgen
 from schedule import Schedule
 pygame.init()
 pygame.font.init()
 
 unpickled = pickle.load(open("circadianInfo.txt","rb"))
 week = unpickled['SchedList']
+
 lastCheck = unpickled['LastCheck']
 
 # Global constants 
@@ -63,6 +65,9 @@ class Week(object):
         self.eventRadius = 5
         self.active = []
         self.sched = Schedule([x[0] for x in week])
+        # print(self.sched.eventColors)
+        # for ev in self.sched.egInfo:
+        #     print(ev.name, ev.color)
         self.sched.getWeek()
                 
     def Cartesian(self):
@@ -223,7 +228,7 @@ class Week(object):
             if d <= 5:
                 self.active = []
                 self.draw()
-                self.getNewEventInfo(self.loa[i][0])
+                self.getEditEventInfo(self.loa[i][0])
 
     def getInput(self, prompt, pos):
         """Draws a surface for any prompt to be written, and displays the user input
@@ -285,7 +290,7 @@ class Week(object):
         """
         self.sched.schedList = [x for x in self.sched.schedList if event != x[0]]
 
-    def getNewEventInfo(self,event):
+    def getEditEventInfo(self,event):
         """Runs all of the functions that could change event info, clears all old event info,
         adds the event's new info and generates a week with it
         saves schedule
@@ -294,7 +299,7 @@ class Week(object):
         self.endChange(event)
         self.freqChange(event)
         self.removeEditedEvent(event)
-        self.sched.addEvent(event)
+        self.sched.editEvent(event)
         self.sched.getWeek()
         self.sched.saveSchedule()
 
@@ -306,19 +311,53 @@ class Week(object):
 
     def endChange(self, event):
         """Edits end change"""
-        newEnd = self.getInput("How days do you want to do this for? ", self.position)
+        newEnd = self.getInput("How many days do you want to do this for? ", self.position)
         if newEnd != 'x':
             event.end = event.start + datetime.timedelta(days=int(newEnd))
 
     def freqChange(self, event):
         """Edits frequency change"""
-        newFreq = self.getInput("New frequency: ", self.position)
+        newFreq = self.getInput("How often (in days) do you want to do this?", self.position)
         if newFreq != 'x':
             event.freq = int(newFreq)
 
+    def getNewEventInfo(self):
+        name = self.getEventName()
+        startInfo = self.getEventStart()
+        start = datetime.datetime(startInfo[0], startInfo[1], startInfo[2], startInfo[3], startInfo[4])
+        end = start + datetime.timedelta(days=self.getEventEnd())
+        self.sched.addEvent(eventgen.EventGen(name,start,end,self.getEventFreq()))
+        self.sched.getWeek()
+        self.sched.saveSchedule()
+
+    def getEventName(self):
+        eName = self.getInput("What do you want to name your new event? ", self.position)
+        return eName
+
+    def getEventStart(self):
+        eYear = self.getInput("What year do you want to start this? ", self.position)
+        eMonth = self.getInput("What month do you want to start this? ", self.position)
+        eDate = self.getInput("What day do you want to start this? ", self.position)
+        eTime = self.getInput("What time of day do you want to do this? ", self.position)
+        eHour = eTime[0:2]
+        eMin = eTime[3:5]
+        return [int(eYear), int(eMonth), int(eDate), int(eHour), int(eMin)]
+
+    def getEventEnd(self):
+        eEnd = self.getInput("For how many days will you want to do this? ", self.position)
+        return int(eEnd)
+
+    def getEventFreq(self):
+        eFreq = self.getInput("How often (in days) do you want to do this? ", self.position)
+        return int(eFreq)
+
+
+
 LoE = []
 w = Week(LoE, pos)
+print(w.sched.eventColors)
 w.Cartesian()
+print(w.sched.eventColors)
 
 testDay = datetime.datetime(2018,7,24)
 
@@ -333,9 +372,15 @@ while True:
             w.eventInfo(mousex, mousey)
         if event.type == pygame.MOUSEBUTTONDOWN:
             mousex, mousey = event.pos
-            w.eventEdit(mousex, mousey)
-            w = Week([], pos)
+            if math.sqrt(((mousex-pos[0])**2)+((mousey-pos[1])**2)) < (w.radius//3)*2:
+                w.getNewEventInfo()
+            else:
+                w.eventEdit(mousex, mousey)
+                w = Week([], pos)
             w.sched.loadSchedule()
             w.Cartesian()
+        if event.type == pygame.QUIT:
+            w.sched.saveSchedule()
+            pygame.quit()
     pygame.display.flip()
 pygame.quit()

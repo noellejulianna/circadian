@@ -2,6 +2,7 @@ import datetime
 import eventgen
 import pickle
 import main
+import random
 from operator import itemgetter
 
 class Schedule(object):
@@ -26,7 +27,13 @@ class Schedule(object):
         self.month = start.month
         self.day = start.day
         self.year = start.year
-        self.egInfo = event
+        self.eventColors = [(218,65,103),(180,99,73),(165,180,82),(178,154,69),(15,113,115),(84,69,127),(119,29,55),(51,24,50),(111,29,27)]
+        self.egInfo = []
+        if type(event) == list:
+            for x in event:
+                self.addEvent(x)
+        else:
+            self.addEvent(event)
         self.schedList = []
         self.lastCheck = datetime.datetime.today()
 
@@ -35,7 +42,6 @@ class Schedule(object):
         Writes a schedule for a given event into a text file
         called schedule.txt
         """
-        #days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         events = []
         for x in self.egInfo:
             if x.start > self.end:
@@ -54,7 +60,6 @@ class Schedule(object):
         eventsFinal = sorted(events, key=itemgetter(1))
         for b in eventsFinal:
             self.schedList.append([b[0],b[1]])
-            #self.schedList.append('To {} on day {} on the date {} at {}.\r\n'.format(b[0],days[b[1].weekday()],b[1].date(),b[1].time()))
         self.schedList = main.removeDups(self.schedList)
         return self.schedList
     
@@ -79,20 +84,6 @@ class Schedule(object):
         self.createSchedule()
         return self.schedList
 
-    # def checkStreaks(self):
-    #     """
-    #     Maintains the streak count for every event and updates the last check 
-    #     """
-    #     if 
-    #     uncheckedEvents = self.getTimeFrame(self.lastCheck,datetime.datetime.today())
-    #     for x in uncheckedEvents:
-    #         check = input("Did you " + x[0].name + " at " + datetime.time(x[1].hour,x[1].minute) + " on " + x[1].weekday() + "? ")
-    #         if check == "Yes":
-    #             x.streak += 1
-    #         elif check == "No":
-    #             x.streak = 0
-    #     self.lastCheck = datetime.datetime.today()
-
     def saveSchedule(self):
         """
         Pickles the schedule.
@@ -108,10 +99,21 @@ class Schedule(object):
         self.schedList = []
         self.schedList = pickle.load(open("circadianInfo.txt", "rb"))['SchedList']
 
+    def editEvent(self, newEvent):
+        self.egInfo.append(newEvent)
+        self.createSchedule()
+
     def addEvent(self, newEvent):
         """
         Adds a new event object to the schedule.
         """
+        if newEvent.color == ():
+            doneColors = [x.color for x in self.egInfo]
+            freeColors = [x for x in self.eventColors if x not in doneColors]
+            if len(freeColors) != 0:
+                newEvent.color = random.choice(freeColors)
+            else:
+                newEvent.color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
         self.egInfo.append(newEvent)
         
     def findCyclePoint(self):
@@ -136,34 +138,4 @@ class Schedule(object):
                     break
             eventPoints.append([anEvent.name,cycleNow])
         return eventPoints
-    
-    # def checkUndoneEvent(self):
-    #     """
-    #     Checks whether there are any events from the last check till now
-    #     that have not been fulfilled
-    #     """
-    #     f = open("history.txt")
-    #     eventLines = f.read()
-    #     f.close()
-    #     LoE = eventLines.split('\n')
-    #     for x in range(len(LoE)):
-
-    # def markEventDone(self):
-    #     """
-    #     Marks an event done for a certain date and time
-    #     """
-    #     done = input("")
-
-    # def resetSchedule(self):
-    #     """
-    #     Resets the schedule to have the start date be the next day
-    #     (Used for when a cycle is broken)
-    #     """
-
-#design schedule for start date to any end date
-#schedule should be able to list multiple events 
-#store as event objects and sort them
-
-#Statistics I want to keep
-    
     
