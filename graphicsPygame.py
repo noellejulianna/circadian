@@ -37,8 +37,7 @@ INNER = (112,132,164)
 DAYS = (57,79,99)
 INPUT = (79,73,85)
 
-# week class
-# keeps track of days and events in week and displays
+# week class: keeps track of days and events in week and displays
 class Week(object):
     def __init__(self, LoE, pos):
         """Constructor, Pass a LoE,
@@ -65,9 +64,6 @@ class Week(object):
         self.eventRadius = 5
         self.active = []
         self.sched = Schedule([x[0] for x in week])
-        # print(self.sched.eventColors)
-        # for ev in self.sched.egInfo:
-        #     print(ev.name, ev.color)
         self.sched.getWeek()
                 
     def Cartesian(self):
@@ -75,7 +71,6 @@ class Week(object):
         # Given day and time, Returns Cartesian coordinates
         # use polar coordinates
         # theta = fraction of week * 2pi (in radians)
-        
         # step 1: get polar
         self.eventRing = (self.radius+self.innRadius)//2
         self.today = datetime.datetime.today()
@@ -282,7 +277,7 @@ class Week(object):
 
     def startChange(self, event):
         """Edits start change"""
-        newStart = self.getInput("How many days from now do you want to restart your cycle? ", self.position)
+        newStart = self.getInput("How many days from now do you want to restart ", self.position)
         if newStart != 'x':
             event.start = datetime.datetime.today() + datetime.timedelta(days=int(newStart))
 
