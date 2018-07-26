@@ -237,7 +237,7 @@ class Week(object):
     def getUncheckEvents(self):
         """Creates a list of all the unchecked events between now and the last time events were confirmed
         """
-        unchecked = self.sched.getTimeFrame(testDay, datetime.datetime.today())
+        unchecked = self.sched.getTimeFrame(lastCheck, datetime.datetime.today())
         for x in unchecked:
             self.eventCheck(x[0],x[1])
     
@@ -329,21 +329,19 @@ class Week(object):
         eFreq = self.getInput("How often (in days) do you want to do this? ", self.position)
         return int(eFreq)
 
-
-
 LoE = []
 w = Week(LoE, pos)
 print(w.sched.eventColors)
 w.Cartesian()
 print(w.sched.eventColors)
 
-testDay = datetime.datetime(2018,7,24)
+lastCheck = datetime.datetime(2018,7,24)
 
 while True:
     w.draw()
-    if datetime.date.today() != testDay:
+    if datetime.date.today() != lastCheck:
         w.getUncheckEvents()
-        testDay = datetime.date.today()
+        lastCheck = datetime.date.today()
     for event in pygame.event.get():
         if event.type == pygame.MOUSEMOTION:
             mousex, mousey = event.pos
