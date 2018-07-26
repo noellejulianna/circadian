@@ -163,6 +163,7 @@ class Week(object):
             elif n == 6:
                 return "Sunday"
 
+        # for loop for display of days
         # label days on pie, rotate days for today to  be at the top,
         current = datetime.datetime.today()
         # days variable
@@ -170,9 +171,9 @@ class Week(object):
         # rotation angle
         angle = 360
         # position list
-        position = [(self.td[0] +85, self.td[1]- 60), (self.tdplusone[0] + 90, self.tdplusone[1]+35), (self.tdplustwo[0] + 0, self.tdplustwo[1] + 90),
-        (self.tdplusthree[0] - 130, self.tdplusthree[1] + 55), (self.tdplusfour[0]- 180, self.tdplusfour[1] - 40), 
-        (self.tdplusfive[0] - 100, self.tdplusfive[1] - 155), (self.tdplusfive[0] - 75, self.tdplussix[1] - 155)]
+        position = [(self.td[0] +85, self.td[1]- 60), (self.tdplusone[0] + 90, self.tdplusone[1]+35), (self.tdplustwo[0] - 10, self.tdplustwo[1] + 90),
+        (self.tdplusthree[0] - 125, self.tdplusthree[1] + 60), (self.tdplusfour[0]- 180, self.tdplusfour[1] - 40), 
+        (self.tdplusfive[0] - 100, self.tdplusfive[1] - 155), (self.tdplussix[0] - 25, self.tdplussix[1] - 175)]
         for x in position:
             todayplus = self.bigFont.render(wname((current+datetime.timedelta(days=days)).weekday()), 100, DAYS)
             rotated = pygame.transform.rotate(todayplus, angle)
