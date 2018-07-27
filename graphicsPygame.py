@@ -21,7 +21,7 @@ SCREEN_HEIGHT = 800
 background_color = (172,160,185)
 listScreen = [SCREEN_WIDTH, SCREEN_HEIGHT]
 
-# display screen
+# display screencd 
 window = pygame.display.set_mode(listScreen)
 window.fill(background_color)
 
@@ -146,7 +146,10 @@ class Week(object):
         # display overall streak
         streakCount = main.overallStreak([x[0] for x in self.loa])
         stringStreak = str(streakCount)
-        streak =  self.bigFont.render(stringStreak + " days", 40, WHITE)
+        if streakCount == 1:
+            streak = self.bigFont.render(stringStreak + " day", 40, WHITE)
+        else:
+            streak =  self.bigFont.render(stringStreak + " days", 40, WHITE)
         window.blit(streak, ((self.position[0]-streak.get_width()//2), (self.position[1]-1.25*self.radius)))
 
         # for loop for display of days
@@ -280,7 +283,7 @@ class Week(object):
 
     def startChange(self, event):
         """Edits start change"""
-        newStart = self.getInput("How many days from now do you want to restart ", self.position)
+        newStart = self.getInput("How many days from now do you want to restart? ", self.position)
         if newStart != 'x':
             event.start = datetime.datetime.today() + datetime.timedelta(days=int(newStart))
 

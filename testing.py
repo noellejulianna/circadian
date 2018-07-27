@@ -18,13 +18,10 @@ kombucha = eventgen.EventGen('kombucha', kombuchastart,kombuchaend,2)
 
 coconutoilstart = datetime.datetime(2018,6,19,12,30)
 coconutoilend = datetime.datetime(2019,6,19,12,30)
-coconutoil = eventgen.EventGen('coconut Oil',coconutoilstart,coconutoilend,7)
+coconutoil = eventgen.EventGen('coconut oil',coconutoilstart,coconutoilend,7)
 
 sched = schedule.Schedule([coconutoil,workout,shampoo])
-print(sched.eventColors)
-print(coconutoil.color,workout.color,shampoo.color)
 sched.addEvent(kombucha)
-print(kombucha.color)
 sched.getWeek()
 
 sched.saveSchedule()
